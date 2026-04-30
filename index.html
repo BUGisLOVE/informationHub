@@ -50,8 +50,8 @@
     --accent: #5fc2cc;
     --accent2: #49aeb8;
     --accent-bg: #19383e;
-    --green: #7bd99a;
-    --green-bg: #1b3928;
+    --green: #0A84FF;
+    --green-bg: rgba(10,132,255,.15);
     --amber: #f0bd5c;
     --amber-bg: #3b2d16;
     --red: #f07b73;
@@ -62,9 +62,9 @@
     --finder-blue: #64d2ff;
     --finder-blue-bg: rgba(100,210,255,.18);
     --finder-blue-border: rgba(100,210,255,.42);
-    --finder-green: #30d158;
-    --finder-green-bg: rgba(48,209,88,.18);
-    --finder-green-border: rgba(48,209,88,.42);
+    --finder-green: #0A84FF;
+    --finder-green-bg: rgba(10,132,255,.18);
+    --finder-green-border: rgba(10,132,255,.40);
     --finder-orange: #ff9f0a;
     --finder-orange-bg: rgba(255,159,10,.18);
     --finder-orange-border: rgba(255,159,10,.42);
@@ -97,8 +97,8 @@
     --accent: #147f8b;
     --accent2: #0f6d77;
     --accent-bg: rgba(20,127,139,.12);
-    --green: #198754;
-    --green-bg: rgba(25,135,84,.12);
+    --green: #007AFF;
+    --green-bg: rgba(0,122,255,.12);
     --amber: #c98412;
     --amber-bg: rgba(201,132,18,.12);
     --red: #c44949;
@@ -1654,6 +1654,247 @@
     }
   }
 
+  .task-card-image {
+    width: 100%;
+    height: 130px;
+    object-fit: cover;
+    border-radius: calc(var(--radius) - 1px);
+    margin-bottom: 10px;
+    border: 1px solid var(--border);
+    display: block;
+  }
+  .kanban-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+  .kanban-page-btn {
+    min-width: 28px;
+    height: 28px;
+    padding: 0 6px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border2);
+    background: var(--bg3);
+    color: var(--text2);
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Pretendard', sans-serif;
+    transition: background .1s, color .1s;
+  }
+  .kanban-page-btn:hover { background: var(--bg4); color: var(--text); }
+  .kanban-page-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+  .kanban-page-info { font-size: 11px; color: var(--text3); padding: 0 4px; }
+
+  /* === WORKSPACE DETAIL REDESIGN === */
+  .ws-header-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .ws-header-title-input {
+    flex: 1;
+    min-width: 160px;
+    font-size: 16px;
+    font-weight: 600;
+    background: transparent;
+    border: none;
+    border-bottom: 1.5px solid var(--border2);
+    border-radius: 0;
+    color: var(--text);
+    padding: 4px 0;
+    font-family: 'Pretendard', sans-serif;
+    transition: border-color .15s;
+  }
+  .ws-header-title-input:focus { outline: none; border-color: var(--accent); }
+  .ws-header-selects {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+  }
+  .ws-header-selects .form-select {
+    padding: 5px 8px;
+    font-size: 12px;
+    width: auto;
+  }
+  .ws-header-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .ws-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(260px, .6fr);
+    gap: 14px;
+    align-items: start;
+  }
+  .ws-left { display: grid; gap: 14px; }
+  .ws-right { display: grid; gap: 14px; }
+  .ws-section {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+  }
+  .ws-section-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin-bottom: 10px;
+  }
+  .ws-link-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .ws-link-row .form-input { font-size: 12px; padding: 6px 10px; }
+  .ws-img-preview {
+    width: 48px;
+    height: 34px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .ws-field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .ws-field-row .form-group { margin-bottom: 0; }
+  .ws-participants-section { display: grid; gap: 8px; }
+  .ws-participant-meta { font-size: 11px; color: var(--text3); }
+  @media (max-width: 960px) {
+    .ws-body { grid-template-columns: 1fr; }
+  }
+  /* ===== DATE PICKER ===== */
+  .dp-trigger-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 8px 12px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-size: 13px;
+    font-family: 'Pretendard', sans-serif;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color .15s, background .15s;
+  }
+  .dp-trigger-btn:hover { border-color: var(--accent); background: var(--bg4); }
+  .dp-trigger-btn:disabled { opacity: .5; cursor: default; pointer-events: none; }
+  .dp-trigger-btn svg { flex-shrink: 0; color: var(--accent); }
+  .dp-trigger-label { flex: 1; min-width: 0; color: var(--text2); }
+  .dp-trigger-label.has-value { color: var(--text); font-weight: 500; }
+  .datepicker-modal-box {
+    width: 340px;
+    max-width: 94vw;
+  }
+  .dp-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .dp-header-label {
+    font-size: 15px;
+    font-weight: 650;
+    color: var(--text);
+  }
+  .dp-nav-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border2);
+    background: var(--bg3);
+    color: var(--text2);
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+    transition: background .12s, color .12s;
+  }
+  .dp-nav-btn:hover { background: var(--bg4); color: var(--text); }
+  .dp-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    margin-bottom: 6px;
+    gap: 2px;
+  }
+  .dp-weekday {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text3);
+    padding: 4px 0;
+  }
+  .dp-weekday:first-child { color: var(--red); }
+  .dp-weekday:last-child  { color: var(--finder-blue); }
+  .dp-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+    margin-bottom: 6px;
+  }
+  .dp-cell {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text);
+    transition: background .1s, color .1s;
+    user-select: none;
+    position: relative;
+  }
+  .dp-cell:hover:not(.dp-cell-other) { background: var(--bg4); }
+  .dp-cell-other { color: var(--text3); cursor: default; pointer-events: none; }
+  .dp-cell-sun { color: var(--red); }
+  .dp-cell-sat { color: var(--finder-blue); }
+  .dp-cell-other.dp-cell-sun,
+  .dp-cell-other.dp-cell-sat { opacity: .45; }
+  .dp-today::after {
+    content: '';
+    position: absolute;
+    bottom: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .dp-selected {
+    background: var(--accent) !important;
+    color: white !important;
+    font-weight: 700;
+  }
+  .dp-selected::after { background: white !important; }
+  .dp-hint {
+    font-size: 11px;
+    color: var(--text3);
+    text-align: center;
+    margin-top: 4px;
+  }
+
   /* SCROLLBAR */
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
@@ -2137,6 +2378,32 @@
   </div>
 </div>
 
+<!-- ===== DATE PICKER MODAL ===== -->
+<div class="modal-overlay" id="datepicker-modal">
+  <div class="modal datepicker-modal-box">
+    <div class="dp-header">
+      <button class="dp-nav-btn" type="button" onclick="dpPrevMonth()">‹</button>
+      <div class="dp-header-label" id="dp-month-label"></div>
+      <button class="dp-nav-btn" type="button" onclick="dpNextMonth()">›</button>
+    </div>
+    <div class="dp-weekdays">
+      <div class="dp-weekday">일</div>
+      <div class="dp-weekday">월</div>
+      <div class="dp-weekday">화</div>
+      <div class="dp-weekday">수</div>
+      <div class="dp-weekday">목</div>
+      <div class="dp-weekday">금</div>
+      <div class="dp-weekday">토</div>
+    </div>
+    <div id="dp-grid"></div>
+    <div class="dp-hint" id="dp-hint"></div>
+    <div class="modal-actions" style="margin-top:14px">
+      <button class="btn btn-secondary" type="button" onclick="closeModal('datepicker-modal')">취소</button>
+      <button class="btn btn-secondary" type="button" onclick="dpGoToday()">오늘</button>
+    </div>
+  </div>
+</div>
+
 <!-- EVENT MODAL -->
 <div class="modal-overlay" id="event-modal">
   <div class="modal">
@@ -2148,11 +2415,19 @@
     <div class="grid2" style="gap:12px">
       <div class="form-group">
         <label class="form-label">시작일</label>
-        <input class="form-input" type="date" id="ev-date">
+        <input type="hidden" id="ev-date">
+        <button class="dp-trigger-btn" type="button" onclick="openDatePicker('ev-date')">
+          <svg viewBox="0 0 16 16" fill="currentColor" style="width:13px;height:13px"><path d="M3.5 0a.5.5 0 01.5.5V1h8V.5a.5.5 0 011 0V1H14a2 2 0 012 2v11a2 2 0 01-2 2H2a2 2 0 01-2-2V3a2 2 0 012-2h1V.5a.5.5 0 01.5-.5zM1 4v10a1 1 0 001 1h12a1 1 0 001-1V4H1z"/></svg>
+          <span class="dp-trigger-label" id="ev-date-display">날짜 선택</span>
+        </button>
       </div>
       <div class="form-group">
         <label class="form-label">종료일</label>
-        <input class="form-input" type="date" id="ev-end-date">
+        <input type="hidden" id="ev-end-date">
+        <button class="dp-trigger-btn" type="button" onclick="openDatePicker('ev-end-date')">
+          <svg viewBox="0 0 16 16" fill="currentColor" style="width:13px;height:13px"><path d="M3.5 0a.5.5 0 01.5.5V1h8V.5a.5.5 0 011 0V1H14a2 2 0 012 2v11a2 2 0 01-2 2H2a2 2 0 01-2-2V3a2 2 0 012-2h1V.5a.5.5 0 01.5-.5zM1 4v10a1 1 0 001 1h12a1 1 0 001-1V4H1z"/></svg>
+          <span class="dp-trigger-label" id="ev-end-date-display">날짜 선택</span>
+        </button>
       </div>
     </div>
     <div class="form-group">
@@ -2222,11 +2497,19 @@
     <div class="grid2" style="gap:12px">
       <div class="form-group">
         <label class="form-label">시작일</label>
-        <input class="form-input" type="date" id="detail-date">
+        <input type="hidden" id="detail-date">
+        <button class="dp-trigger-btn" type="button" onclick="openDatePicker('detail-date')">
+          <svg viewBox="0 0 16 16" fill="currentColor" style="width:13px;height:13px"><path d="M3.5 0a.5.5 0 01.5.5V1h8V.5a.5.5 0 011 0V1H14a2 2 0 012 2v11a2 2 0 01-2 2H2a2 2 0 01-2-2V3a2 2 0 012-2h1V.5a.5.5 0 01.5-.5zM1 4v10a1 1 0 001 1h12a1 1 0 001-1V4H1z"/></svg>
+          <span class="dp-trigger-label" id="detail-date-display">날짜 선택</span>
+        </button>
       </div>
       <div class="form-group">
         <label class="form-label">종료일</label>
-        <input class="form-input" type="date" id="detail-end-date">
+        <input type="hidden" id="detail-end-date">
+        <button class="dp-trigger-btn" type="button" onclick="openDatePicker('detail-end-date')">
+          <svg viewBox="0 0 16 16" fill="currentColor" style="width:13px;height:13px"><path d="M3.5 0a.5.5 0 01.5.5V1h8V.5a.5.5 0 011 0V1H14a2 2 0 012 2v11a2 2 0 01-2 2H2a2 2 0 01-2-2V3a2 2 0 012-2h1V.5a.5.5 0 01.5-.5zM1 4v10a1 1 0 001 1h12a1 1 0 001-1V4H1z"/></svg>
+          <span class="dp-trigger-label" id="detail-end-date-display">날짜 선택</span>
+        </button>
       </div>
     </div>
     <div class="grid2" style="gap:12px">
@@ -2314,6 +2597,10 @@
       </select>
     </div>
     <div class="form-group">
+      <label class="form-label">대표 이미지 URL <span style="color:var(--text3);font-weight:400">(공모전·대회 포스터 등, 선택)</span></label>
+      <input class="form-input" id="task-image-url" placeholder="https://example.com/poster.jpg">
+    </div>
+    <div class="form-group">
       <label class="form-label">내용 정리</label>
       <textarea class="form-textarea" id="task-detail" placeholder="회의 내용, 수업 요약, 준비물, 다음 액션 등을 적어두세요"></textarea>
     </div>
@@ -2382,7 +2669,11 @@
       </div>
       <div class="form-group">
         <label class="form-label">날짜</label>
-        <input class="form-input" id="workspace-task-date" type="date">
+        <input type="hidden" id="workspace-task-date">
+        <button class="dp-trigger-btn" type="button" onclick="openDatePicker('workspace-task-date')">
+          <svg viewBox="0 0 16 16" fill="currentColor" style="width:13px;height:13px"><path d="M3.5 0a.5.5 0 01.5.5V1h8V.5a.5.5 0 011 0V1H14a2 2 0 012 2v11a2 2 0 01-2 2H2a2 2 0 01-2-2V3a2 2 0 012-2h1V.5a.5.5 0 01.5-.5zM1 4v10a1 1 0 001 1h12a1 1 0 001-1V4H1z"/></svg>
+          <span class="dp-trigger-label" id="workspace-task-date-display">날짜 선택</span>
+        </button>
       </div>
       <div class="form-group">
         <label class="form-label">워크스페이스 링크</label>
@@ -2546,6 +2837,10 @@
       <label class="form-label">분야</label>
       <input class="form-input" id="member-profile-field" placeholder="예) 회로 설계, 임베디드, AI">
     </div>
+    <div class="form-group">
+      <label class="form-label">수상 이력 <span style="color:var(--text3);font-weight:400">(본인만 수정 가능)</span></label>
+      <textarea class="form-textarea" id="member-profile-awards" placeholder="예) 2024 한국전자전 동상 / 2023 교내 캡스톤 최우수상 / ..." style="min-height:72px;resize:vertical"></textarea>
+    </div>
     <div class="modal-actions">
       <button class="btn btn-secondary" onclick="closeModal('member-profile-modal')">닫기</button>
       <button class="btn btn-primary" id="member-profile-save-btn" onclick="saveMemberProfile()">저장</button>
@@ -2643,7 +2938,7 @@ function save(k,v, space = currentSpace){ try{ localStorage.setItem(scopedKey(k,
 function load(k,d, space = currentSpace){ try{ const v=localStorage.getItem(scopedKey(k, space)); return v?JSON.parse(v):d; }catch(e){ return d; } }
 function saveGlobal(k,v){ try{ localStorage.setItem(KEY+k, JSON.stringify(v)); }catch(e){} }
 function loadGlobal(k,d){ try{ const v=localStorage.getItem(KEY+k); return v?JSON.parse(v):d; }catch(e){ return d; } }
-let currentTheme = loadGlobal('theme', 'dark') === 'light' ? 'light' : 'dark';
+let currentTheme = loadGlobal('theme', 'light') === 'light' ? 'light' : 'dark';
 function updateThemeToggleButton(){
   const button = document.getElementById('theme-toggle-btn');
   if(button) button.textContent = currentTheme === 'light' ? '다크 모드' : '라이트 모드';
@@ -2695,6 +2990,7 @@ function normalizeMemberRecord(member = {}, fallbackSpace = currentSpace, index 
     school: String(member?.school || '').trim(),
     department: String(member?.department || '').trim(),
     field,
+    awards: String(member?.awards || '').trim(),
     space: targetSpace
   };
 }
@@ -3047,7 +3343,8 @@ function normalizeTaskRecord(task = {}){
     pageLinks: normalizeWorkspaceLinks(task.pageLinks || task.resources || []),
     scheduleColor: String(task.scheduleColor || '').trim() || '',
     extraSchedules: normalizeExtraSchedules(task.extraSchedules || []),
-    comments: normalizeTaskComments(task.comments || [])
+    comments: normalizeTaskComments(task.comments || []),
+    imageUrl: String(task.imageUrl || '').trim()
   };
 }
 function getSelectableMembers(){
@@ -3553,6 +3850,7 @@ function startDataSubscriptions(space = currentSpace){
         school: user.school || '',
         department: user.department || '',
         field: user.field || '',
+        awards: user.awards || '',
         space: user.space || targetSpace
       }));
       // Firebase is the source of truth for the live member roster.
@@ -3628,7 +3926,8 @@ function startDataSubscriptions(space = currentSpace){
       pageLinks: item.pageLinks || item.resources || [],
       scheduleColor: item.scheduleColor || '',
       extraSchedules: item.extraSchedules || [],
-      comments: item.comments || []
+      comments: item.comments || [],
+      imageUrl: item.imageUrl || ''
     })) : [];
     save('tasks', tasks);
     if(!tasks.some(task => String(task.id) === String(selectedWorkspaceTaskId))){
@@ -4244,13 +4543,19 @@ function findPresenceRecord(member){
   }) || null;
 }
 
+const PRESENCE_STALE_MS = 3 * 60 * 1000; // 3분 — heartbeat 간격 30s의 6배
+
 function memberPresenceStatus(member){
   const sameUid = currentUser?.uid && String(member?.id) === String(currentUser.uid);
   const sameName = currentUser?.name && member?.name === currentUser.name;
   const sameEmail = currentUser?.email && String(member?.email || '').toLowerCase() === String(currentUser.email).toLowerCase();
   if(currentUser && (sameUid || sameName || sameEmail)) return 'online';
   const record = findPresenceRecord(member);
-  return record?.online ? 'online' : 'offline';
+  if(!record?.online) return 'offline';
+  // heartbeat updatedAt 이 너무 오래됐으면 stale → offline 처리
+  const updatedAt = Number(record?.updatedAt || 0);
+  if(updatedAt && Date.now() - updatedAt > PRESENCE_STALE_MS) return 'offline';
+  return 'online';
 }
 
 function applyLocalPresence(online){
@@ -4529,6 +4834,11 @@ function selectScheduleOwner(value){
 function orderedDates(a, b){ return a <= b ? [a, b] : [b, a]; }
 
 // ===== KANBAN =====
+function setKanbanPage(colId, page){
+  kanbanPageState[colId] = page;
+  renderKanban();
+}
+
 function renderKanban(){
   const isHub = currentSpace === 'hub';
   const cols = [
@@ -4548,9 +4858,14 @@ function renderKanban(){
       if(!search) return true;
       return [task.title, task.assignee, task.detail, task.scheduledDate].some(value => String(value || '').toLowerCase().includes(search));
     });
+    const totalPages = Math.max(1, Math.ceil(colTasks.length / KANBAN_PAGE_SIZE));
+    const currentPage = Math.min(kanbanPageState[col.id] || 0, totalPages - 1);
+    kanbanPageState[col.id] = currentPage;
+    const pageTasks = colTasks.slice(currentPage * KANBAN_PAGE_SIZE, (currentPage + 1) * KANBAN_PAGE_SIZE);
     const memberColors = {}; MEMBERS.forEach(m=>{ memberColors[m.name]=m.color; });
-    const cards = colTasks.map(t=>`
+    const cards = pageTasks.map(t=>`
       <div class="task-card ${String(selectedWorkspaceTaskId) === String(t.id) ? 'active' : ''}" onclick='openWorkspaceTaskPage(${JSON.stringify(t.id)})'>
+        ${t.imageUrl ? `<img class="task-card-image" src="${escapeAttr(t.imageUrl)}" alt="포스터" onerror="this.style.display='none'">` : ''}
         <div class="task-card-head">
           <div class="task-title">${escapeHtml(t.title)}</div>
           ${t.link ? `<button class="task-card-link" type="button" title="워크스페이스 열기" onclick='event.stopPropagation(); openWorkspaceLink(${JSON.stringify(t.link)})'><svg viewBox="0 0 16 16" fill="currentColor"><path d="M6.354 9.646a.5.5 0 010 .708l-2 2a2 2 0 102.828 2.828l2-2a.5.5 0 11.708.708l-2 2a3 3 0 11-4.243-4.243l2-2a.5.5 0 01.707 0z"/><path d="M9.646 6.354a.5.5 0 010-.708l2-2a3 3 0 114.243 4.243l-2 2a.5.5 0 01-.708-.708l2-2a2 2 0 10-2.828-2.828l-2 2a.5.5 0 01-.707 0z"/><path d="M5.5 10.5a.5.5 0 010-.707l5-5a.5.5 0 01.707.707l-5 5a.5.5 0 01-.707 0z"/></svg></button>` : ''}
@@ -4573,6 +4888,22 @@ function renderKanban(){
           </div>
         </div>
       </div>`).join('');
+    // Pagination HTML
+    let paginationHtml = '';
+    if(totalPages > 1){
+      const prevDisabled = currentPage === 0;
+      const nextDisabled = currentPage >= totalPages - 1;
+      let pageButtons = '';
+      for(let i = 0; i < totalPages; i++){
+        pageButtons += `<button class="kanban-page-btn ${i === currentPage ? 'active' : ''}" type="button" onclick="event.stopPropagation(); setKanbanPage('${col.id}', ${i})">${i+1}</button>`;
+      }
+      paginationHtml = `
+        <div class="kanban-pagination">
+          <button class="kanban-page-btn" type="button" ${prevDisabled ? 'disabled style="opacity:.35;cursor:default"' : ''} onclick="event.stopPropagation(); setKanbanPage('${col.id}', ${currentPage - 1})">‹</button>
+          ${pageButtons}
+          <button class="kanban-page-btn" type="button" ${nextDisabled ? 'disabled style="opacity:.35;cursor:default"' : ''} onclick="event.stopPropagation(); setKanbanPage('${col.id}', ${currentPage + 1})">›</button>
+        </div>`;
+    }
     return `<div class="kanban-col">
       <div class="kanban-col-header">
         <div class="kanban-col-title"><div style="width:8px;height:8px;border-radius:50%;background:${col.dot}"></div>${col.label}</div>
@@ -4580,6 +4911,7 @@ function renderKanban(){
       </div>
       ${cards}
       <div style="text-align:center;padding:8px 0;cursor:pointer;color:var(--text3);font-size:12px" onclick="openTaskModalStatus('${col.id}')">+ 추가</div>
+      ${paginationHtml}
     </div>`;
   }).join('');
 }
@@ -4698,7 +5030,8 @@ function openMemberProfile(id){
   document.getElementById('member-profile-school').value = member.school || '';
   document.getElementById('member-profile-department').value = member.department || '';
   document.getElementById('member-profile-field').value = member.field || member.role || '';
-  ['member-profile-school','member-profile-department','member-profile-field'].forEach(idValue => {
+  document.getElementById('member-profile-awards').value = member.awards || '';
+  ['member-profile-school','member-profile-department','member-profile-field','member-profile-awards'].forEach(idValue => {
     const input = document.getElementById(idValue);
     if(input) input.readOnly = !isSelf;
   });
@@ -4714,15 +5047,17 @@ async function saveMemberProfile(){
   const nextSchool = document.getElementById('member-profile-school').value.trim();
   const nextDepartment = document.getElementById('member-profile-department').value.trim();
   const nextField = document.getElementById('member-profile-field').value.trim();
+  const nextAwards = document.getElementById('member-profile-awards').value.trim();
   MEMBERS = MEMBERS.map(item => String(item.id) === String(id) ? {
     ...item,
     school: nextSchool,
     department: nextDepartment,
     field: nextField,
+    awards: nextAwards,
     tags: Array.from(new Set([nextField || item.role || '', ...(item.tags || [])].filter(Boolean))).slice(0, 4)
   } : item);
   if(currentUser && (currentUser.uid === member.id || currentUser.email === member.email || currentUser.name === member.name)){
-    currentUser = { ...currentUser, school:nextSchool, department:nextDepartment, field:nextField };
+    currentUser = { ...currentUser, school:nextSchool, department:nextDepartment, field:nextField, awards:nextAwards };
     save('currentUser', currentUser);
   }
   save('members', MEMBERS);
@@ -4731,6 +5066,7 @@ async function saveMemberProfile(){
       school: nextSchool,
       department: nextDepartment,
       field: nextField,
+      awards: nextAwards,
       updatedAt: Date.now()
     }).catch(() => {});
   }
@@ -5667,6 +6003,8 @@ function resetEventForm(dateValue){
   document.getElementById('ev-title').value = '';
   document.getElementById('ev-date').value = dateValue;
   document.getElementById('ev-end-date').value = dateValue;
+  dpUpdateDisplay('ev-date');
+  dpUpdateDisplay('ev-end-date');
   document.getElementById('ev-time').value = '10:00';
   document.getElementById('ev-type').value = 'meeting';
   document.getElementById('ev-memo').value = '';
@@ -5679,6 +6017,7 @@ function openEventModalRange(a, b){
   const [start, end] = orderedDates(a, b);
   resetEventForm(start);
   document.getElementById('ev-end-date').value = end;
+  dpUpdateDisplay('ev-end-date');
   openModal('event-modal');
 }
 
@@ -5746,6 +6085,8 @@ function openEventDetail(id){
   document.getElementById('detail-title').value = eventItem.title || '';
   document.getElementById('detail-date').value = eventItem.date || fmtDate(today);
   document.getElementById('detail-end-date').value = eventEndDate(eventItem) || eventItem.date || fmtDate(today);
+  dpUpdateDisplay('detail-date');
+  dpUpdateDisplay('detail-end-date');
   document.getElementById('detail-time').value = eventItem.time || '10:00';
   document.getElementById('detail-type').value = eventItem.type || 'meeting';
   renderAuthorSelect('detail-author', eventOwnerName(eventItem));
@@ -5830,6 +6171,8 @@ function openEventDetail(id){
   document.getElementById('detail-title').value = eventItem.title || '';
   document.getElementById('detail-date').value = eventItem.date || fmtDate(today);
   document.getElementById('detail-end-date').value = eventEndDate(eventItem) || eventItem.date || fmtDate(today);
+  dpUpdateDisplay('detail-date');
+  dpUpdateDisplay('detail-end-date');
   document.getElementById('detail-time').value = eventItem.time || '10:00';
   document.getElementById('detail-type').value = detailType;
   renderAuthorSelect('detail-author', eventOwnerName(eventItem));
@@ -5845,6 +6188,9 @@ function openEventDetail(id){
   ['detail-title','detail-date','detail-end-date','detail-time','detail-type','detail-author','detail-memo'].forEach(fieldId => {
     const field = document.getElementById(fieldId);
     if(field) field.disabled = !canEdit;
+    // also disable/enable the date picker button sibling if present
+    const btn = field?.nextElementSibling;
+    if(btn && btn.classList.contains('dp-trigger-btn')) btn.disabled = !canEdit;
   });
   const participantWrap = document.getElementById('detail-participants');
   if(participantWrap){
@@ -5938,6 +6284,8 @@ function escapeAttr(value){
 }
 
 let defaultTaskStatus = 'todo';
+let kanbanPageState = {}; // { colId: pageNumber (0-indexed) }
+const KANBAN_PAGE_SIZE = 4;
 function openTaskModal(){
   defaultTaskStatus='todo';
   populateMemberSelects();
@@ -5973,8 +6321,10 @@ function addTask(){
   const scheduledDate=fmtDate(today);
   const detail=document.getElementById('task-detail').value.trim();
   const participants=getCheckedMemberNames('task-participants');
+  const imageUrl=document.getElementById('task-image-url')?.value.trim() || '';
   if(!title){ alert('태스크 제목을 입력하세요'); return; }
   if(link && !/^https?:\/\//i.test(link)){ alert('워크스페이스 링크는 http:// 또는 https://로 시작해야 합니다'); return; }
+  if(imageUrl && !/^https?:\/\//i.test(imageUrl)){ alert('이미지 URL은 http:// 또는 https://로 시작해야 합니다'); return; }
   const normalizedParticipants = normalizeEventParticipants(participants.length ? participants : [assignee]);
   if(participantLimit && normalizedParticipants.length > participantLimit){
     alert('현재 체크된 참여 인원이 참가인원 제한보다 많습니다.');
@@ -5993,12 +6343,13 @@ function addTask(){
     detail,
     participants: normalizedParticipants,
     pageText: '',
-    pageLinks: []
+    pageLinks: [],
+    imageUrl
   };
   if(firebaseReady && firebaseDb && currentUser?.uid){
     firebaseApi.push(firebaseApi.ref(firebaseDb, firebasePath('projects')), taskData);
   } else {
-    const newTask = normalizeTaskRecord({ id:Date.now(), title, link, status:defaultTaskStatus, assignee, participantLimit, category, scheduledDate, detail, participants: normalizedParticipants, pageText:'', pageLinks:[] });
+    const newTask = normalizeTaskRecord({ id:Date.now(), title, link, status:defaultTaskStatus, assignee, participantLimit, category, scheduledDate, detail, participants: normalizedParticipants, pageText:'', pageLinks:[], imageUrl });
     tasks.push(newTask);
     selectedWorkspaceTaskId = newTask.id;
     save('tasks', tasks);
@@ -6008,6 +6359,7 @@ function addTask(){
   document.getElementById('task-link').value='';
   document.getElementById('task-detail').value='';
   document.getElementById('task-participant-limit').value='';
+  if(document.getElementById('task-image-url')) document.getElementById('task-image-url').value='';
   renderKanban();
   renderDashboard();
 }
@@ -6026,6 +6378,7 @@ function openWorkspaceTaskModal(id){
   document.getElementById('workspace-task-participant-limit').value = task.participantLimit || '';
   document.getElementById('workspace-task-category').value = task.category || 'research';
   document.getElementById('workspace-task-date').value = task.scheduledDate || fmtDate(today);
+  dpUpdateDisplay('workspace-task-date');
   document.getElementById('workspace-task-detail').value = task.detail || '';
   openModal('workspace-task-modal');
   renderKanban();
@@ -6107,12 +6460,17 @@ function saveWorkspaceTaskPageDetail(){
     : normalizeWorkspaceLinks(task.pageLinks || []);
   const scheduleColor = String(document.getElementById('workspace-page-schedule-color')?.value || '').trim();
   const extraSchedules = collectExtraScheduleRows();
+  const imageUrl = String(document.getElementById('workspace-page-image-url')?.value || '').trim();
   if(!title){
     alert('태스크 제목을 입력하세요');
     return;
   }
   if(link && !/^https?:\/\//i.test(link)){
     alert('워크스페이스 링크는 http:// 또는 https://로 시작해야 합니다');
+    return;
+  }
+  if(imageUrl && !/^https?:\/\//i.test(imageUrl)){
+    alert('이미지 URL은 http:// 또는 https://로 시작해야 합니다');
     return;
   }
   const invalidLink = pageLinks.find(item => item.url && !/^https?:\/\//i.test(item.url));
@@ -6137,6 +6495,7 @@ function saveWorkspaceTaskPageDetail(){
   task.pageLinks = pageLinks;
   task.scheduleColor = scheduleColor;
   task.extraSchedules = extraSchedules;
+  task.imageUrl = imageUrl;
   if(firebaseReady && firebaseDb && typeof task.id === 'string'){
     firebaseApi.update(firebaseApi.ref(firebaseDb, firebasePath('projects') + '/' + task.id), {
       title,
@@ -6151,7 +6510,8 @@ function saveWorkspaceTaskPageDetail(){
       pageText,
       pageLinks,
       scheduleColor,
-      extraSchedules
+      extraSchedules,
+      imageUrl
     });
   } else {
     save('tasks', tasks);
@@ -6193,99 +6553,110 @@ function renderWorkspaceTaskPage(){
   const memberOptions = MEMBERS.map(member => `<option value="${escapeAttr(member.name)}" ${member.name === task.assignee ? 'selected' : ''}>${escapeHtml(member.name)}</option>`).join('');
   content.innerHTML = `
     <div class="workspace-detail-shell">
-      <div class="workspace-detail-card workspace-basic-card">
-        <div class="workspace-detail-topbar">
-          <div>
-            <div class="workspace-detail-title">${escapeHtml(task.title || '작업')}</div>
-            <div class="workspace-detail-meta">
-              <span class="badge badge-gray">${escapeHtml(task.assignee || '미지정')}</span>
-              <span class="badge badge-gray">${escapeHtml(categoryLabel[task.category] || task.category || '연구')}</span>
-              <span class="badge ${task.participantLimit ? 'badge-purple' : 'badge-gray'}">${escapeHtml(participantLimitText(task.participantLimit))}</span>
-              <span class="badge badge-gray">${escapeHtml(statusLabelMap[task.status] || task.status || '할 일')}</span>
-              <span class="badge badge-gray">${escapeHtml(task.scheduledDate || '-')}</span>
-            </div>
-            <div class="workspace-detail-caption">이 페이지는 현재 작업만을 위한 독립 상세 화면입니다. 카드 요약부터 긴 정리, 참여자, 일정 표시까지 한 곳에서 관리할 수 있습니다.</div>
-          </div>
-          <div class="workspace-detail-topbar-actions">
-            <button class="btn btn-secondary" type="button" onclick="openWorkspaceTaskModal(${JSON.stringify(task.id)})">요약 모달</button>
-            <button class="btn btn-secondary" type="button" onclick="openWorkspaceLink(document.getElementById('workspace-page-link')?.value || '')">대표 링크 열기</button>
-          </div>
+
+      <!-- ① 헤더 바 — 제목 + 상태/카테고리 셀렉트 + 액션 버튼 -->
+      <div class="ws-header-card">
+        <input class="ws-header-title-input" id="workspace-page-title-input" value="${escapeAttr(task.title || '')}" placeholder="태스크 제목">
+        <div class="ws-header-selects">
+          <select class="form-select" id="workspace-page-status" title="진행 상태">
+            <option value="todo" ${task.status === 'todo' ? 'selected' : ''}>할 일</option>
+            <option value="inprogress" ${task.status === 'inprogress' ? 'selected' : ''}>진행 중</option>
+            <option value="done" ${task.status === 'done' ? 'selected' : ''}>완료</option>
+          </select>
+          <select class="form-select" id="workspace-page-category" title="카테고리">
+            <option value="research" ${(task.category || 'research') === 'research' ? 'selected' : ''}>연구</option>
+            <option value="paper" ${task.category === 'paper' ? 'selected' : ''}>논문</option>
+            <option value="hw" ${task.category === 'hw' ? 'selected' : ''}>하드웨어</option>
+            <option value="sw" ${task.category === 'sw' ? 'selected' : ''}>소프트웨어</option>
+            <option value="contest" ${task.category === 'contest' ? 'selected' : ''}>공모전</option>
+            <option value="admin" ${task.category === 'admin' ? 'selected' : ''}>행정</option>
+          </select>
+        </div>
+        <div class="ws-header-actions">
+          <button class="btn btn-secondary btn-sm" type="button" onclick="openWorkspaceLink(document.getElementById('workspace-page-link')?.value || '')">링크 열기</button>
+          <button class="btn btn-secondary btn-sm" type="button" onclick="openWorkspaceTaskModal(${JSON.stringify(task.id)})">요약 편집</button>
         </div>
       </div>
-      <div class="workspace-detail-card">
-        <div class="workspace-page-actions">
-          <div>
-            <div class="workspace-detail-section-title" style="margin-bottom:4px">기본 정보</div>
-            <div class="workspace-page-status">이곳에서 수정하는 내용이 카드 요약과 상세 페이지에 함께 반영됩니다.</div>
-          </div>
-        </div>
-        <div class="workspace-meta-grid">
-          <div class="form-group">
-            <label class="form-label">제목</label>
-            <input class="form-input" id="workspace-page-title-input" value="${escapeAttr(task.title || '')}">
-          </div>
-          <div class="form-group">
-            <label class="form-label">담당자</label>
-            <select class="form-select" id="workspace-page-assignee">${memberOptions}</select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">진행 상태</label>
-            <select class="form-select" id="workspace-page-status">
-              <option value="todo" ${task.status === 'todo' ? 'selected' : ''}>할 일</option>
-              <option value="inprogress" ${task.status === 'inprogress' ? 'selected' : ''}>진행 중</option>
-              <option value="done" ${task.status === 'done' ? 'selected' : ''}>완료</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">참가인원 제한</label>
-            <input class="form-input" id="workspace-page-participant-limit" type="number" min="1" value="${escapeAttr(task.participantLimit || '')}" placeholder="제한 없음">
-          </div>
-          <div class="form-group">
-            <label class="form-label">카테고리</label>
-            <select class="form-select" id="workspace-page-category">
-              <option value="research" ${(task.category || 'research') === 'research' ? 'selected' : ''}>연구</option>
-              <option value="paper" ${task.category === 'paper' ? 'selected' : ''}>논문</option>
-              <option value="hw" ${task.category === 'hw' ? 'selected' : ''}>하드웨어</option>
-              <option value="sw" ${task.category === 'sw' ? 'selected' : ''}>소프트웨어</option>
-              <option value="contest" ${task.category === 'contest' ? 'selected' : ''}>공모전</option>
-              <option value="admin" ${task.category === 'admin' ? 'selected' : ''}>행정</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">날짜</label>
-            <input class="form-input" id="workspace-page-date" type="date" value="${escapeAttr(task.scheduledDate || fmtDate(today))}">
-          </div>
-          <div class="form-group" style="grid-column:1 / -1">
-            <label class="form-label">대표 워크스페이스 링크</label>
-            <div class="workspace-link-box">
-              <svg viewBox="0 0 16 16" fill="currentColor" style="width:14px;height:14px;color:var(--accent)"><path d="M6.354 9.646a.5.5 0 010 .708l-2 2a2 2 0 102.828 2.828l2-2a.5.5 0 11.708.708l-2 2a3 3 0 11-4.243-4.243l2-2a.5.5 0 01.707 0z"/><path d="M9.646 6.354a.5.5 0 010-.708l2-2a3 3 0 114.243 4.243l-2 2a.5.5 0 01-.708-.708l2-2a2 2 0 10-2.828-2.828l-2 2a.5.5 0 01-.707 0z"/><path d="M5.5 10.5a.5.5 0 010-.707l5-5a.5.5 0 01.707.707l-5 5a.5.5 0 01-.707 0z"/></svg>
-              <input class="form-input" id="workspace-page-link" value="${escapeAttr(task.link || '')}" placeholder="https://...">
-              <button class="btn btn-secondary btn-sm" type="button" onclick="openWorkspaceLink(document.getElementById('workspace-page-link').value)">열기</button>
+
+      <!-- ② 바디 — 2컬럼 -->
+      <div class="ws-body">
+
+        <!-- 왼쪽: 링크 + 이미지 + 요약 + 공유 텍스트 -->
+        <div class="ws-left">
+
+          <!-- 링크 & 이미지 -->
+          <div class="ws-section">
+            <div class="ws-section-title">링크 &amp; 이미지</div>
+            <div class="form-group" style="margin-bottom:8px">
+              <label class="form-label">대표 링크</label>
+              <div class="ws-link-row">
+                <svg viewBox="0 0 16 16" fill="currentColor" style="width:13px;height:13px;color:var(--accent);flex-shrink:0"><path d="M6.354 9.646a.5.5 0 010 .708l-2 2a2 2 0 102.828 2.828l2-2a.5.5 0 11.708.708l-2 2a3 3 0 11-4.243-4.243l2-2a.5.5 0 01.707 0z"/><path d="M9.646 6.354a.5.5 0 010-.708l2-2a3 3 0 114.243 4.243l-2 2a.5.5 0 01-.708-.708l2-2a2 2 0 10-2.828-2.828l-2 2a.5.5 0 01-.707 0z"/></svg>
+                <input class="form-input" id="workspace-page-link" value="${escapeAttr(task.link || '')}" placeholder="https://..." style="flex:1">
+                <button class="btn btn-secondary btn-sm" type="button" onclick="openWorkspaceLink(document.getElementById('workspace-page-link').value)">열기</button>
+              </div>
+            </div>
+            <div class="form-group" style="margin-bottom:0">
+              <label class="form-label">이미지 URL <span style="color:var(--text3);font-weight:400">(포스터·배너 등, 선택)</span></label>
+              <div class="ws-link-row">
+                <input class="form-input" id="workspace-page-image-url" value="${escapeAttr(task.imageUrl || '')}" placeholder="https://example.com/poster.jpg" style="flex:1">
+                ${task.imageUrl ? `<img src="${escapeAttr(task.imageUrl)}" class="ws-img-preview" onerror="this.style.display='none'" alt="미리보기">` : ''}
+              </div>
             </div>
           </div>
-          <div class="form-group" style="grid-column:1 / -1">
-            <label class="form-label">카드 요약</label>
-            <textarea class="form-textarea workspace-summary-box workspace-page-summary-box" id="workspace-page-detail" placeholder="칸반 카드에 보일 짧은 요약">${escapeHtml(task.detail || '')}</textarea>
+
+          <!-- 카드 요약 -->
+          <div class="ws-section">
+            <div class="ws-section-title">카드 요약</div>
+            <textarea class="form-textarea" id="workspace-page-detail" placeholder="칸반 카드에 표시될 짧은 요약" style="min-height:72px;margin:0">${escapeHtml(task.detail || '')}</textarea>
           </div>
+
+          <!-- 공유 텍스트 -->
+          <div class="ws-section">
+            <div class="ws-section-title">공유 텍스트</div>
+            <textarea class="form-textarea workspace-detail-text" id="workspace-page-text" placeholder="회의 정리, 진행 메모, 전달 사항 등 자유롭게 작성" style="margin:0">${escapeHtml(task.pageText || '')}</textarea>
+          </div>
+
         </div>
-      </div>
-      <div class="workspace-page-grid">
-        <div class="workspace-detail-card workspace-text-card">
-          <div class="workspace-detail-section-title">공유 텍스트</div>
-          <textarea class="form-textarea workspace-detail-text" id="workspace-page-text" placeholder="이 작업에서 공유할 긴 설명, 진행 메모, 회의 정리, 전달 사항 등을 적어주세요.">${escapeHtml(task.pageText || '')}</textarea>
-        </div>
-        <div class="workspace-detail-card workspace-participant-card">
-          <div class="workspace-participant-stack">
-            <div>
-              <div class="workspace-detail-section-title">참여자 / 확인 인원</div>
-              <div class="workspace-modal-note">체크한 인원은 이 작업과 연결된 사람으로 함께 저장됩니다.</div>
+
+        <!-- 오른쪽: 기본 정보 + 참여자 -->
+        <div class="ws-right">
+
+          <!-- 기본 정보 -->
+          <div class="ws-section">
+            <div class="ws-section-title">기본 정보</div>
+            <div class="form-group">
+              <label class="form-label">담당자</label>
+              <select class="form-select" id="workspace-page-assignee">${memberOptions}</select>
             </div>
-            <div class="workspace-participant-count">현재 ${participants.length}명 선택됨${task.participantLimit ? ` / 제한 ${task.participantLimit}명` : ''}</div>
-            <input class="form-input member-check-search" id="workspace-page-participants-search" placeholder="이름 검색" oninput="filterMemberChecks('workspace-page-participants', this.value)">
-            <div class="member-check-list" id="workspace-page-participants"></div>
+            <div class="ws-field-row" style="margin-bottom:10px">
+              <div class="form-group">
+                <label class="form-label">날짜</label>
+                <input type="hidden" id="workspace-page-date" value="${escapeAttr(task.scheduledDate || fmtDate(today))}">
+                <button class="dp-trigger-btn" type="button" onclick="openDatePicker('workspace-page-date')">
+                  <svg viewBox="0 0 16 16" fill="currentColor" style="width:13px;height:13px"><path d="M3.5 0a.5.5 0 01.5.5V1h8V.5a.5.5 0 011 0V1H14a2 2 0 012 2v11a2 2 0 01-2 2H2a2 2 0 01-2-2V3a2 2 0 012-2h1V.5a.5.5 0 01.5-.5zM1 4v10a1 1 0 001 1h12a1 1 0 001-1V4H1z"/></svg>
+                  <span class="dp-trigger-label ${task.scheduledDate ? 'has-value' : ''}" id="workspace-page-date-display">${task.scheduledDate ? formatDisplayDate(task.scheduledDate) : '날짜 선택'}</span>
+                </button>
+              </div>
+              <div class="form-group">
+                <label class="form-label">참가 제한</label>
+                <input class="form-input" id="workspace-page-participant-limit" type="number" min="1" value="${escapeAttr(task.participantLimit || '')}" placeholder="제한 없음">
+              </div>
+            </div>
           </div>
+
+          <!-- 참여자 -->
+          <div class="ws-section">
+            <div class="ws-section-title">참여자</div>
+            <div class="ws-participants-section">
+              <div class="ws-participant-meta">현재 ${participants.length}명${task.participantLimit ? ` / 최대 ${task.participantLimit}명` : ''} · 체크한 인원이 이 작업과 연결됩니다.</div>
+              <input class="form-input member-check-search" id="workspace-page-participants-search" placeholder="이름 검색" oninput="filterMemberChecks('workspace-page-participants', this.value)">
+              <div class="member-check-list" id="workspace-page-participants"></div>
+            </div>
+          </div>
+
         </div>
       </div>
+
       ${currentSpace === 'hub' ? renderHubScheduleEditor(task) : ''}
       ${currentSpace === 'hub' ? renderHubCommentsSection(task) : ''}
     </div>
@@ -6343,7 +6714,11 @@ function renderExtraScheduleRow(extra){
       </div>
       <div class="form-group" style="margin:0">
         <label class="form-label">날짜</label>
-        <input class="form-input" type="date" data-extra-field="date" data-autosave="1" value="${escapeAttr(extra?.date || '')}">
+        <input type="hidden" data-extra-field="date" data-autosave="1" value="${escapeAttr(extra?.date || '')}">
+        <button class="dp-trigger-btn" type="button" onclick="openDatePickerEl(this.previousElementSibling)" style="padding:6px 10px;font-size:12px">
+          <svg viewBox="0 0 16 16" fill="currentColor" style="width:12px;height:12px"><path d="M3.5 0a.5.5 0 01.5.5V1h8V.5a.5.5 0 011 0V1H14a2 2 0 012 2v11a2 2 0 01-2 2H2a2 2 0 01-2-2V3a2 2 0 012-2h1V.5a.5.5 0 01.5-.5zM1 4v10a1 1 0 001 1h12a1 1 0 001-1V4H1z"/></svg>
+          <span class="dp-trigger-label dp-date-display ${extra?.date ? 'has-value' : ''}">${extra?.date ? formatDisplayDate(extra.date) : '날짜 선택'}</span>
+        </button>
       </div>
       <div class="form-group" style="margin:0">
         <label class="form-label">색상</label>
@@ -6686,7 +7061,8 @@ function saveWorkspaceTaskDetail(){
       detail,
       participants: normalizeEventParticipants(task.participants || [assignee].filter(Boolean)),
       pageText: task.pageText || '',
-      pageLinks: normalizeWorkspaceLinks(task.pageLinks || [])
+      pageLinks: normalizeWorkspaceLinks(task.pageLinks || []),
+      imageUrl: task.imageUrl || ''
     });
   } else {
     save('tasks', tasks);
@@ -6794,6 +7170,135 @@ async function deleteFile(id){
       alert('공유 링크 삭제를 Firebase에 반영하지 못했습니다. 잠시 후 다시 시도해 주세요.');
     }
   }
+}
+
+// ===== DATE PICKER =====
+let dpTargetEl = null;
+let dpTarget   = null;
+let dpViewYear = new Date().getFullYear();
+let dpViewMonth= new Date().getMonth();
+
+const DP_MONTH_NAMES = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+
+function formatDisplayDate(dateStr){
+  if(!dateStr) return '날짜 선택';
+  const parts = String(dateStr).split('-');
+  if(parts.length < 3) return dateStr;
+  const [y, m, d] = parts.map(Number);
+  if(!y || !m || !d) return dateStr;
+  return `${y}년 ${m}월 ${d}일`;
+}
+
+function dpUpdateDisplay(id){
+  const hidden  = document.getElementById(id);
+  const display = document.getElementById(id + '-display');
+  if(!display) return;
+  const val = hidden?.value || '';
+  display.textContent = val ? formatDisplayDate(val) : '날짜 선택';
+  display.classList.toggle('has-value', Boolean(val));
+}
+
+function openDatePicker(targetId){
+  dpTarget   = targetId;
+  dpTargetEl = document.getElementById(targetId);
+  const val  = dpTargetEl?.value || fmtDate(today);
+  const p    = val.split('-').map(Number);
+  dpViewYear  = p[0] || today.getFullYear();
+  dpViewMonth = (p[1] ? p[1] - 1 : today.getMonth());
+  dpRenderCalendar();
+  openModal('datepicker-modal');
+}
+
+function openDatePickerEl(el){
+  dpTargetEl = el;
+  dpTarget   = el?.id || null;
+  const val  = el?.value || fmtDate(today);
+  const p    = val.split('-').map(Number);
+  dpViewYear  = p[0] || today.getFullYear();
+  dpViewMonth = (p[1] ? p[1] - 1 : today.getMonth());
+  dpRenderCalendar();
+  openModal('datepicker-modal');
+}
+
+function dpPrevMonth(){
+  dpViewMonth--;
+  if(dpViewMonth < 0){ dpViewMonth = 11; dpViewYear--; }
+  dpRenderCalendar();
+}
+function dpNextMonth(){
+  dpViewMonth++;
+  if(dpViewMonth > 11){ dpViewMonth = 0; dpViewYear++; }
+  dpRenderCalendar();
+}
+function dpGoToday(){
+  const t = fmtDate(new Date());
+  const p = t.split('-').map(Number);
+  dpViewYear  = p[0];
+  dpViewMonth = p[1] - 1;
+  dpRenderCalendar();
+  dpSelectDate(t);
+}
+
+function dpRenderCalendar(){
+  document.getElementById('dp-month-label').textContent =
+    `${dpViewYear}년 ${DP_MONTH_NAMES[dpViewMonth]}`;
+
+  const selectedStr  = dpTargetEl?.value || '';
+  const todayStr     = fmtDate(new Date());
+  const firstDay     = new Date(dpViewYear, dpViewMonth, 1).getDay();     // 0=Sun
+  const daysInMonth  = new Date(dpViewYear, dpViewMonth + 1, 0).getDate();
+  const prevMonthEnd = new Date(dpViewYear, dpViewMonth, 0).getDate();
+
+  let html = '';
+  // ── leading cells from previous month ──
+  for(let i = firstDay - 1; i >= 0; i--){
+    html += `<div class="dp-cell dp-cell-other dp-cell-${(7-firstDay+i+7)%7===0?'sun':((7-firstDay+i+7)%7===6?'sat':'')}">${prevMonthEnd - i}</div>`;
+  }
+  // ── current month ──
+  for(let d = 1; d <= daysInMonth; d++){
+    const ds  = `${dpViewYear}-${String(dpViewMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dow = (firstDay + d - 1) % 7; // 0=Sun, 6=Sat
+    const cls = [
+      'dp-cell',
+      dow === 0 ? 'dp-cell-sun' : (dow === 6 ? 'dp-cell-sat' : ''),
+      ds === todayStr    ? 'dp-today'    : '',
+      ds === selectedStr ? 'dp-selected' : ''
+    ].filter(Boolean).join(' ');
+    html += `<div class="${cls}" onclick="dpSelectDate('${ds}')">${d}</div>`;
+  }
+  // ── trailing cells ──
+  const used  = firstDay + daysInMonth;
+  const total = Math.ceil(used / 7) * 7;
+  for(let d = 1; d <= total - used; d++){
+    const dow = (used + d - 1) % 7;
+    html += `<div class="dp-cell dp-cell-other ${dow===0?'dp-cell-sun':dow===6?'dp-cell-sat':''}">${d}</div>`;
+  }
+
+  document.getElementById('dp-grid').innerHTML = html;
+  const hintEl = document.getElementById('dp-hint');
+  if(hintEl) hintEl.textContent = selectedStr ? `선택됨: ${formatDisplayDate(selectedStr)}` : '';
+}
+
+function dpSelectDate(dateStr){
+  // 1. update the hidden input (or any element)
+  if(dpTargetEl){
+    dpTargetEl.value = dateStr;
+    dpTargetEl.dispatchEvent(new Event('input',  { bubbles: true }));
+    dpTargetEl.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+  // 2. update the named display span (for static HTML buttons)
+  if(dpTarget){
+    dpUpdateDisplay(dpTarget);
+  }
+  // 3. update display span inside the button (for dynamically-rendered rows)
+  if(dpTargetEl){
+    const btn = dpTargetEl.nextElementSibling;
+    if(btn && btn.classList.contains('dp-trigger-btn')){
+      const span = btn.querySelector('.dp-date-display, .dp-trigger-label');
+      if(span){ span.textContent = formatDisplayDate(dateStr); span.classList.add('has-value'); }
+    }
+  }
+  closeModal('datepicker-modal');
 }
 
 // ===== INIT =====
