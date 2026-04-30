@@ -11,6 +11,32 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    /* firebase realtime 규칙
+
+    {
+  "rules": {
+    "users": { ".read": "auth != null", ".write": "auth != null" },
+    "schedules": { ".read": "auth != null", ".write": "auth != null" },
+    "projects": { ".read": "auth != null", ".write": "auth != null" },
+    "files": { ".read": "auth != null", ".write": "auth != null" },
+    "signupRequests": { ".read": true, ".write": true },
+    "presence": { ".read": "auth != null", ".write": "auth != null" },
+    "suggestions": { ".read": "auth != null", ".write": "auth != null" },
+    "personalPages": { ".read": "auth != null", ".write": "auth != null" },
+    "hub": {
+      "users": { ".read": "auth != null", ".write": "auth != null" },
+      "schedules": { ".read": "auth != null", ".write": "auth != null" },
+      "projects": { ".read": "auth != null", ".write": "auth != null" },
+      "files": { ".read": "auth != null", ".write": "auth != null" },
+      "signupRequests": { ".read": true, ".write": true },
+      "presence": { ".read": "auth != null", ".write": "auth != null" },
+      "suggestions": { ".read": "auth != null", ".write": "auth != null" },
+      "personalPages": { ".read": "auth != null", ".write": "auth != null" }
+    }
+  }
+}
+    */
+
   :root {
     --bg: #0d1217;
     --bg2: #171e25;
@@ -141,12 +167,13 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+    color: #fff;
     border-right: 1px solid var(--border);
     position: relative;
     overflow: hidden;
     background-image:
-      linear-gradient(180deg, rgba(13,18,23,.18), rgba(13,18,23,.84)),
-      url('https://cdn.jsdelivr.net/gh/BUGisLOVE/image@main/background2.png');
+      linear-gradient(180deg, rgba(11,16,22,.04), rgba(11,16,22,.46)),
+      url('https://github.com/BUGisLOVE/informationHub/blob/main/background2.png?raw=true');
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
@@ -155,13 +182,13 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: rgba(0,0,0,.18);
+    background: linear-gradient(135deg, rgba(255,255,255,.14), rgba(255,255,255,0) 44%, rgba(0,0,0,.06));
     pointer-events: none;
   }
   .auth-copy > * { position: relative; z-index: 1; }
   .auth-kicker { color: var(--accent); font-size: 12px; font-weight: 600; letter-spacing: .04em; margin-bottom: 14px; }
-  .auth-copy h1 { font-size: clamp(42px, 7vw, 74px); line-height: 1; font-weight: 650; margin-bottom: 18px; }
-  .auth-copy p { color: var(--text2); max-width: 600px; line-height: 1.7; font-size: 15px; }
+  .auth-copy h1 { color: #fff; text-shadow: 0 14px 36px rgba(0,0,0,.28); font-size: clamp(42px, 7vw, 74px); line-height: 1; font-weight: 650; margin-bottom: 18px; }
+  .auth-copy p { color: rgba(255,255,255,.88); text-shadow: 0 8px 24px rgba(0,0,0,.18); max-width: 600px; line-height: 1.7; font-size: 15px; }
   .auth-panel {
     align-self: center;
     margin: 28px;
@@ -1305,6 +1332,70 @@
     cursor: pointer;
   }
   .color-option.active { border-color: var(--text); }
+  .color-picker-note { color: var(--text3); font-size: 11px; margin-top: 6px; line-height: 1.45; }
+  .event-detail-modal {
+    width: 760px;
+    max-width: 96vw;
+  }
+  .event-detail-summary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) + 2px);
+    background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+  }
+  .event-detail-summary-main {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+  .event-detail-color-preview {
+    width: 16px;
+    height: 16px;
+    border-radius: 999px;
+    background: var(--accent);
+    box-shadow: 0 0 0 4px rgba(95,194,204,.12);
+    flex-shrink: 0;
+  }
+  .event-detail-summary-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+  }
+  .event-detail-summary-sub {
+    margin-top: 4px;
+    color: var(--text3);
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .event-detail-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+  .event-detail-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  .event-detail-chip strong {
+    color: var(--text);
+    font-weight: 600;
+  }
   .member-check-list {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
@@ -1619,7 +1710,7 @@
       <div class="nav-item" onclick="navigate('schedule')">
         <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3.5 0a.5.5 0 01.5.5V1h8V.5a.5.5 0 011 0V1H14a2 2 0 012 2v11a2 2 0 01-2 2H2a2 2 0 01-2-2V3a2 2 0 012-2h1.5V.5a.5.5 0 01.5-.5zM2 2a1 1 0 00-1 1v1h14V3a1 1 0 00-1-1H2zm13 3H1v9a1 1 0 001 1h12a1 1 0 001-1V5z"/></svg>
         일정 공유
-        <span class="nav-badge" id="badge-schedule">3</span>
+        <span class="nav-badge" id="badge-schedule" hidden></span>
       </div>
       <div class="nav-item" onclick="navigate('workspace')">
         <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V2zm5 0a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1H7a1 1 0 01-1-1V2zm5 0a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1h-2a1 1 0 01-1-1V2zM1 7a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V7zm5 0a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1H7a1 1 0 01-1-1V7zm5 0a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1h-2a1 1 0 01-1-1V7zM1 12a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1v-2zm5 0a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1H7a1 1 0 01-1-1v-2zm5 0a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1h-2a1 1 0 01-1-1v-2z"/></svg>
@@ -2082,6 +2173,19 @@
       </select>
     </div>
     <div class="form-group">
+      <label class="form-label">색상</label>
+      <div class="color-picker" id="event-color-picker">
+        <button class="color-option" type="button" style="--event-color:#ff453a" data-color="#ff453a" title="빨강"></button>
+        <button class="color-option" type="button" style="--event-color:#ff9f0a" data-color="#ff9f0a" title="주황"></button>
+        <button class="color-option" type="button" style="--event-color:#ffd60a" data-color="#ffd60a" title="노랑"></button>
+        <button class="color-option" type="button" style="--event-color:#30d158" data-color="#30d158" title="초록"></button>
+        <button class="color-option" type="button" style="--event-color:#64d2ff" data-color="#64d2ff" title="파랑"></button>
+        <button class="color-option" type="button" style="--event-color:#bf5af2" data-color="#bf5af2" title="보라"></button>
+        <button class="color-option" type="button" style="--event-color:#8e8e93" data-color="#8e8e93" title="회색"></button>
+      </div>
+      <div class="color-picker-note">유형 기본 색을 그대로 쓰거나, 일정마다 직접 고를 수 있습니다.</div>
+    </div>
+    <div class="form-group">
       <label class="form-label">관련 인원</label>
       <div class="member-check-list" id="ev-participants"></div>
     </div>
@@ -2098,9 +2202,19 @@
 
 <!-- EVENT DETAIL MODAL -->
 <div class="modal-overlay" id="event-detail-modal">
-  <div class="modal">
+  <div class="modal event-detail-modal">
     <div class="modal-title">일정 상세</div>
     <input type="hidden" id="detail-id">
+    <div class="event-detail-summary">
+      <div class="event-detail-summary-main">
+        <div class="event-detail-color-preview" id="detail-color-preview"></div>
+        <div>
+          <div class="event-detail-summary-title" id="detail-preview-title">일정 정보</div>
+          <div class="event-detail-summary-sub" id="detail-preview-sub">날짜와 참여 인원을 한눈에 확인할 수 있습니다.</div>
+        </div>
+      </div>
+      <div class="event-detail-badges" id="detail-preview-badges"></div>
+    </div>
     <div class="form-group">
       <label class="form-label">제목</label>
       <input class="form-input" id="detail-title">
@@ -2132,6 +2246,18 @@
           <option value="lab">🟢 실험</option>
           <option value="other">⚫ 기타</option>
         </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">색상</label>
+      <div class="color-picker" id="detail-color-picker">
+        <button class="color-option" type="button" style="--event-color:#ff453a" data-color="#ff453a" title="빨강"></button>
+        <button class="color-option" type="button" style="--event-color:#ff9f0a" data-color="#ff9f0a" title="주황"></button>
+        <button class="color-option" type="button" style="--event-color:#ffd60a" data-color="#ffd60a" title="노랑"></button>
+        <button class="color-option" type="button" style="--event-color:#30d158" data-color="#30d158" title="초록"></button>
+        <button class="color-option" type="button" style="--event-color:#64d2ff" data-color="#64d2ff" title="파랑"></button>
+        <button class="color-option" type="button" style="--event-color:#bf5af2" data-color="#bf5af2" title="보라"></button>
+        <button class="color-option" type="button" style="--event-color:#8e8e93" data-color="#8e8e93" title="회색"></button>
       </div>
     </div>
     <div class="grid2" style="gap:12px">
@@ -2359,6 +2485,7 @@
     </div>
     <div class="modal-actions">
       <button class="btn btn-secondary" onclick="closeModal('file-detail-modal')">닫기</button>
+      <button class="btn btn-secondary" type="button" id="file-detail-delete-btn" style="color:var(--red);border-color:var(--red)">삭제</button>
       <button class="btn btn-primary" onclick="addFileComment()">댓글 등록</button>
     </div>
   </div>
@@ -3232,11 +3359,14 @@ function normalizeEventRecord(eventItem){
   const explicitMultiDay = eventItem.multiDay === true || (eventItem.multiDay !== false && sourceEndInclusive !== date);
   const rawEndDate = hasEndDate || explicitMultiDay ? sourceEndInclusive : date;
   const endDate = explicitMultiDay ? normalizeEndDate(date, rawEndDate) : date;
+  const savedColor = String(eventItem.customColor || eventItem.color || '').trim();
   return {
     ...eventItem,
     date,
     endDate,
     multiDay: explicitMultiDay && endDate !== date,
+    color: savedColor || eventColorByType(eventItem.type || 'meeting'),
+    customColor: savedColor,
     participants: normalizeEventParticipants(eventItem.participants || eventItem.members || eventItem.participantNames || [])
   };
 }
@@ -3469,7 +3599,8 @@ function startDataSubscriptions(space = currentSpace){
         time: item.time || (String(item.start || '').includes('T') ? String(item.start).slice(11, 16) : '10:00'),
         type: item.type || 'meeting',
         memo: item.description || item.memo || '',
-        color: item.color || eventColorByType(item.type || 'meeting'),
+        color: item.color || item.customColor || eventColorByType(item.type || 'meeting'),
+        customColor: item.customColor || item.color || '',
         author: item.author || '',
         participants: item.participants || item.members || item.participantNames || []
       });
@@ -3959,7 +4090,8 @@ function tagFilterDotColor(value){
 }
 function eventColor(e){
   if(e && e.customColor) return e.customColor;
-  return eventColorByType(e.type);
+  if(e && e.color) return e.color;
+  return eventColorByType(e?.type);
 }
 function buildHubScheduleEvents(){
   const out = [];
@@ -3976,7 +4108,8 @@ function buildHubScheduleEvents(){
       participants: normalizeEventParticipants(eventItem.participants || []),
       author: eventOwnerName(eventItem),
       sourceTaskId: null,
-      customColor: eventItem.customColor || ''
+      color: eventItem.color || eventColorByType(eventItem.type || 'meeting'),
+      customColor: eventItem.customColor || eventItem.color || ''
     });
   });
   tasks.forEach(task => {
@@ -4507,6 +4640,11 @@ function openFileDetail(id){
   if(openBtn){
     openBtn.disabled = !file.url;
     openBtn.onclick = () => openFileLink(file.url);
+  }
+  const deleteBtn = document.getElementById('file-detail-delete-btn');
+  if(deleteBtn){
+    deleteBtn.disabled = false;
+    deleteBtn.onclick = () => deleteFile(file.id);
   }
   document.getElementById('file-comment-list').innerHTML = comments.length ? comments.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0)).map(comment => `
     <div class="file-comment-item">
@@ -5408,17 +5546,45 @@ function setColorPicker(pickerId, color){
   });
 }
 function setEventColor(color){ setColorPicker('event-color-picker', color); }
+function setDetailEventColor(color){ setColorPicker('detail-color-picker', color); }
+function selectedColorFromPicker(pickerId, fallback = ''){
+  const active = document.querySelector(`#${pickerId} .color-option.active`);
+  return String(active?.dataset.color || '').trim() || fallback;
+}
 document.querySelectorAll('.color-picker .color-option').forEach(btn => {
   btn.addEventListener('click', () => {
     if(btn.closest('.color-picker')?.classList.contains('type-locked')) return;
-    setColorPicker(btn.closest('.color-picker').id, btn.dataset.color);
+    const picker = btn.closest('.color-picker');
+    if(!picker) return;
+    setColorPicker(picker.id, btn.dataset.color);
+    if(picker.id === 'detail-color-picker') updateEventDetailPreview();
   });
 });
-function syncEventTypeColorPreview(){
+function syncEventTypeColorPreview(force = false){
   const type = document.getElementById('ev-type')?.value || 'meeting';
-  setEventColor(eventColorByType(type));
+  const select = document.getElementById('ev-type');
+  const nextAutoColor = eventColorByType(type);
+  const previousAutoColor = select?.dataset.lastAutoColor || '';
+  const currentColor = selectedColorFromPicker('event-color-picker');
+  if(force || !currentColor || currentColor === previousAutoColor){
+    setEventColor(nextAutoColor);
+  }
+  if(select) select.dataset.lastAutoColor = nextAutoColor;
 }
 document.getElementById('ev-type')?.addEventListener('change', syncEventTypeColorPreview);
+function syncDetailTypeColorPreview(force = false){
+  const type = document.getElementById('detail-type')?.value || 'meeting';
+  const select = document.getElementById('detail-type');
+  const nextAutoColor = eventColorByType(type);
+  const previousAutoColor = select?.dataset.lastAutoColor || '';
+  const currentColor = selectedColorFromPicker('detail-color-picker');
+  if(force || !currentColor || currentColor === previousAutoColor){
+    setDetailEventColor(nextAutoColor);
+  }
+  if(select) select.dataset.lastAutoColor = nextAutoColor;
+  updateEventDetailPreview();
+}
+document.getElementById('detail-type')?.addEventListener('change', () => syncDetailTypeColorPreview());
 
 function renderAuthorSelect(selectId, selectedName){
   const select = document.getElementById(selectId);
@@ -5454,6 +5620,44 @@ function filterMemberChecks(containerId, query = ''){
 function getCheckedMemberNames(containerId){
   return Array.from(document.querySelectorAll(`#${containerId} input[type="checkbox"]:checked`)).map(input=>input.value);
 }
+function formatPreviewDateRange(start, end){
+  const normalizedStart = dateOnly(start || fmtDate(today));
+  const normalizedEnd = normalizeEndDate(normalizedStart, end || normalizedStart);
+  const short = value => String(value || '').slice(5).replace('-', '/');
+  return normalizedStart === normalizedEnd ? short(normalizedStart) : `${short(normalizedStart)} - ${short(normalizedEnd)}`;
+}
+function updateEventDetailPreview(){
+  const title = document.getElementById('detail-title')?.value.trim() || '일정 정보';
+  const startDate = document.getElementById('detail-date')?.value || fmtDate(today);
+  const endDate = document.getElementById('detail-end-date')?.value || startDate;
+  const time = document.getElementById('detail-time')?.value || '시간 미정';
+  const type = document.getElementById('detail-type')?.value || 'meeting';
+  const participants = getCheckedMemberNames('detail-participants');
+  const author = document.getElementById('detail-author')?.value || currentUser?.name || '미지정';
+  const color = selectedColorFromPicker('detail-color-picker', eventColorByType(type));
+  const previewTitle = document.getElementById('detail-preview-title');
+  const previewSub = document.getElementById('detail-preview-sub');
+  const previewColor = document.getElementById('detail-color-preview');
+  const previewBadges = document.getElementById('detail-preview-badges');
+  if(previewTitle) previewTitle.textContent = title;
+  if(previewSub) previewSub.textContent = `${formatPreviewDateRange(startDate, endDate)} · ${time} · ${author}`;
+  if(previewColor) previewColor.style.background = color;
+  if(previewBadges){
+    const chips = [
+      `<span class="event-detail-chip"><strong>${escapeHtml(typeLabel(type))}</strong></span>`,
+      `<span class="event-detail-chip">기간 <strong>${escapeHtml(formatPreviewDateRange(startDate, endDate))}</strong></span>`,
+      `<span class="event-detail-chip">참여 <strong>${escapeHtml(String(participants.length || 1))}명</strong></span>`
+    ];
+    previewBadges.innerHTML = chips.join('');
+  }
+}
+['detail-title', 'detail-date', 'detail-end-date', 'detail-time'].forEach(fieldId => {
+  const field = document.getElementById(fieldId);
+  field?.addEventListener('input', updateEventDetailPreview);
+  field?.addEventListener('change', updateEventDetailPreview);
+});
+document.getElementById('detail-author')?.addEventListener('change', updateEventDetailPreview);
+document.getElementById('detail-participants')?.addEventListener('change', updateEventDetailPreview);
 
 function memberIdByName(name){
   return MEMBERS.find(member=>member.name === name)?.id || '';
@@ -5466,7 +5670,7 @@ function resetEventForm(dateValue){
   document.getElementById('ev-time').value = '10:00';
   document.getElementById('ev-type').value = 'meeting';
   document.getElementById('ev-memo').value = '';
-  syncEventTypeColorPreview();
+  syncEventTypeColorPreview(true);
   renderMemberChecks('ev-participants', currentUser?.name ? [currentUser.name] : []);
 }
 
@@ -5485,7 +5689,7 @@ function addEvent(){
   const time=document.getElementById('ev-time').value;
   const type=document.getElementById('ev-type').value;
   const memo=document.getElementById('ev-memo').value.trim();
-  const color=eventColorByType(type);
+  const color=selectedColorFromPicker('event-color-picker', eventColorByType(type));
   const author = currentUser?.name || '이름없음';
   const participants = getCheckedMemberNames('ev-participants');
   const multiDay=endDate!==date;
@@ -5504,6 +5708,7 @@ function addEvent(){
     allDay: true,
     description: memo,
     color,
+    customColor: color,
     author,
     participants: normalizedParticipants,
     uid: currentUser?.uid || ''
@@ -5619,15 +5824,20 @@ function openEventDetail(id){
   const eventItem = events.find(e=>String(e.id)===String(id));
   if(!eventItem) return;
   const canEdit = canCurrentUserEditEvent(eventItem);
+  const detailType = eventItem.type || 'meeting';
+  const savedColor = eventItem.customColor || eventItem.color || eventColorByType(detailType);
   document.getElementById('detail-id').value = eventItem.id;
   document.getElementById('detail-title').value = eventItem.title || '';
   document.getElementById('detail-date').value = eventItem.date || fmtDate(today);
   document.getElementById('detail-end-date').value = eventEndDate(eventItem) || eventItem.date || fmtDate(today);
   document.getElementById('detail-time').value = eventItem.time || '10:00';
-  document.getElementById('detail-type').value = eventItem.type || 'meeting';
+  document.getElementById('detail-type').value = detailType;
   renderAuthorSelect('detail-author', eventOwnerName(eventItem));
   renderMemberChecks('detail-participants', eventParticipantNames(eventItem).length ? eventParticipantNames(eventItem) : [eventOwnerName(eventItem)]);
   document.getElementById('detail-memo').value = eventItem.memo || '';
+  setDetailEventColor(savedColor);
+  const detailTypeSelect = document.getElementById('detail-type');
+  if(detailTypeSelect) detailTypeSelect.dataset.lastAutoColor = eventColorByType(detailType);
   document.getElementById('detail-delete-btn').onclick = () => {
     closeModal('event-detail-modal');
     deleteEvent(eventItem.id);
@@ -5642,6 +5852,13 @@ function openEventDetail(id){
       input.disabled = !canEdit;
     });
   }
+  const colorPicker = document.getElementById('detail-color-picker');
+  if(colorPicker){
+    colorPicker.classList.toggle('type-locked', !canEdit);
+    colorPicker.querySelectorAll('.color-option').forEach(button => {
+      button.disabled = !canEdit;
+    });
+  }
   const deleteBtn = document.getElementById('detail-delete-btn');
   if(deleteBtn){
     deleteBtn.disabled = !canEdit;
@@ -5652,6 +5869,7 @@ function openEventDetail(id){
     saveBtn.disabled = !canEdit;
     saveBtn.style.display = canEdit ? '' : 'none';
   }
+  updateEventDetailPreview();
   openModal('event-detail-modal');
 }
 
@@ -5669,6 +5887,7 @@ function saveEventDetail(){
   const time = document.getElementById('detail-time').value || '10:00';
   const type = document.getElementById('detail-type').value;
   const memo = document.getElementById('detail-memo').value.trim();
+  const color = selectedColorFromPicker('detail-color-picker', eventColorByType(type));
   const author = document.getElementById('detail-author').value || original.author || currentUser?.name || '이름없음';
   const participants = getCheckedMemberNames('detail-participants');
   const normalizedParticipants = normalizeEventParticipants(participants.length ? participants : [author]);
@@ -5686,7 +5905,8 @@ function saveEventDetail(){
     end: addDaysDate(endDate, 1),
     allDay: true,
     description: memo,
-    color: eventColorByType(type),
+    color,
+    customColor: color,
     author,
     participants: normalizedParticipants,
     uid: original.uid || memberIdByName(author) || currentUser?.uid || ''
@@ -5882,7 +6102,9 @@ function saveWorkspaceTaskPageDetail(){
   const detail = String(document.getElementById('workspace-page-detail')?.value || '').trim();
   const participants = normalizeEventParticipants(getCheckedMemberNames('workspace-page-participants'));
   const pageText = String(document.getElementById('workspace-page-text')?.value || '').trim();
-  const pageLinks = normalizeWorkspaceLinks(collectWorkspaceResourceRows());
+  const pageLinks = document.getElementById('workspace-resource-list')
+    ? normalizeWorkspaceLinks(collectWorkspaceResourceRows())
+    : normalizeWorkspaceLinks(task.pageLinks || []);
   const scheduleColor = String(document.getElementById('workspace-page-schedule-color')?.value || '').trim();
   const extraSchedules = collectExtraScheduleRows();
   if(!title){
@@ -5982,7 +6204,7 @@ function renderWorkspaceTaskPage(){
               <span class="badge badge-gray">${escapeHtml(statusLabelMap[task.status] || task.status || '할 일')}</span>
               <span class="badge badge-gray">${escapeHtml(task.scheduledDate || '-')}</span>
             </div>
-            <div class="workspace-detail-caption">이 페이지는 현재 작업만을 위한 독립 상세 화면입니다. 카드 요약부터 긴 정리, 참여자, 링크 목록까지 한 곳에서 관리할 수 있습니다.</div>
+            <div class="workspace-detail-caption">이 페이지는 현재 작업만을 위한 독립 상세 화면입니다. 카드 요약부터 긴 정리, 참여자, 일정 표시까지 한 곳에서 관리할 수 있습니다.</div>
           </div>
           <div class="workspace-detail-topbar-actions">
             <button class="btn btn-secondary" type="button" onclick="openWorkspaceTaskModal(${JSON.stringify(task.id)})">요약 모달</button>
@@ -6062,15 +6284,6 @@ function renderWorkspaceTaskPage(){
             <input class="form-input member-check-search" id="workspace-page-participants-search" placeholder="이름 검색" oninput="filterMemberChecks('workspace-page-participants', this.value)">
             <div class="member-check-list" id="workspace-page-participants"></div>
           </div>
-        </div>
-      </div>
-      <div class="workspace-detail-card">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px">
-          <div class="workspace-detail-section-title" style="margin-bottom:0">공유 링크</div>
-          <button class="btn btn-secondary btn-sm" type="button" onclick="addWorkspaceResourceRow()">링크 추가</button>
-        </div>
-        <div class="workspace-resource-list" id="workspace-resource-list">
-          ${resources.length ? resources.map(resource => renderWorkspaceResourceRow(resource)).join('') : '<div class="workspace-empty-note">아직 등록된 링크가 없습니다. 논문, 드라이브, 노션, 회의록 링크 등을 추가해둘 수 있습니다.</div>'}
         </div>
       </div>
       ${currentSpace === 'hub' ? renderHubScheduleEditor(task) : ''}
@@ -6251,7 +6464,9 @@ function runWorkspaceAutoSave(){
   const detail = String(document.getElementById('workspace-page-detail')?.value || '').trim();
   const participants = normalizeEventParticipants(getCheckedMemberNames('workspace-page-participants'));
   const pageText = String(document.getElementById('workspace-page-text')?.value || '').trim();
-  const pageLinks = normalizeWorkspaceLinks(collectWorkspaceResourceRows());
+  const pageLinks = document.getElementById('workspace-resource-list')
+    ? normalizeWorkspaceLinks(collectWorkspaceResourceRows())
+    : normalizeWorkspaceLinks(task.pageLinks || []);
   const scheduleColor = String(document.getElementById('workspace-page-schedule-color')?.value || '').trim();
   const extraSchedules = collectExtraScheduleRows();
   // Validate links — but don't block; just warn in status
@@ -6493,14 +6708,29 @@ async function addFile(){
   if(!name){ alert('자료명을 입력하세요'); return; }
   if(url && !/^https?:\/\//i.test(url)){ alert('공유 링크는 http:// 또는 https://로 시작해야 합니다'); return; }
   const ext=name.split('.').pop().toUpperCase();
-  const fileData = normalizeFileRecord({ id:Date.now(), name, ext, category, uploader, date:fmtDate(today), size:'-', url, description, uid:currentUser?.uid || '', comments:[] });
+  let fileRef = null;
+  let fileId = Date.now();
+  if(firebaseReady && firebaseDb && currentUser?.uid){
+    fileRef = firebaseApi.push(firebaseApi.ref(firebaseDb, firebasePath('files')));
+    fileId = fileRef?.key || fileId;
+  }
+  const fileData = normalizeFileRecord({ id:fileId, name, ext, category, uploader, date:fmtDate(today), size:'-', url, description, uid:currentUser?.uid || '', comments:[] });
+  const previousFiles = files.slice();
   files.push(fileData);
   save('files', files);
-  if(firebaseReady && firebaseDb && currentUser?.uid){
+  renderDashboard();
+  renderFiles();
+  if(fileRef){
     try{
-      await firebaseApi.push(firebaseApi.ref(firebaseDb, firebasePath('files')), fileData);
+      await firebaseApi.set(fileRef, fileData);
     } catch(error){
       console.warn('file upload sync failed', error);
+      files = previousFiles;
+      save('files', files);
+      renderDashboard();
+      renderFiles();
+      alert('공유 링크를 Firebase에 저장하지 못했습니다. 네트워크 또는 권한 상태를 확인한 뒤 다시 시도해 주세요.');
+      return;
     }
   }
   closeModal('file-modal');
@@ -6509,7 +6739,6 @@ async function addFile(){
   document.getElementById('file-description').value='';
   const searchInput = document.getElementById('file-search');
   if(searchInput) searchInput.value = '';
-  renderFiles();
 }
 
 function openFileLink(url){
@@ -6532,7 +6761,7 @@ function addFileComment(){
     createdAt: Date.now()
   };
   file.comments = [...normalizeFileComments(file.comments), comment];
-  if(firebaseReady && firebaseDb && typeof id === 'string'){
+  if(firebaseReady && firebaseDb && id !== undefined && id !== null && id !== ''){
     firebaseApi.update(firebaseApi.ref(firebaseDb, firebasePath('files') + '/' + id), { comments:file.comments });
   } else {
     save('files', files);
@@ -6541,14 +6770,29 @@ function addFileComment(){
   openFileDetail(id);
 }
 
-function deleteFile(id){
-  if(firebaseReady && firebaseDb && typeof id === 'string'){
-    firebaseApi.remove(firebaseApi.ref(firebaseDb, firebasePath('files') + '/' + id));
-  } else {
-    files=files.filter(f=>f.id!==id); save('files',files); renderFiles();
-  }
+async function deleteFile(id){
+  const target = files.find(item => String(item.id) === String(id));
+  if(!target) return;
+  if(!confirm(`'${target.name || '이 공유 링크'}'을(를) 삭제하시겠어요?`)) return;
+  const previousFiles = files.slice();
+  files = files.filter(item => String(item.id) !== String(target.id));
+  save('files', files);
+  renderDashboard();
+  renderFiles();
   if(String(document.getElementById('file-detail-id')?.value || '') === String(id)){
     closeModal('file-detail-modal');
+  }
+  if(firebaseReady && firebaseDb && target.id !== undefined && target.id !== null && target.id !== ''){
+    try{
+      await firebaseApi.remove(firebaseApi.ref(firebaseDb, firebasePath('files') + '/' + target.id));
+    } catch(error){
+      console.warn('file delete sync failed', error);
+      files = previousFiles;
+      save('files', files);
+      renderDashboard();
+      renderFiles();
+      alert('공유 링크 삭제를 Firebase에 반영하지 못했습니다. 잠시 후 다시 시도해 주세요.');
+    }
   }
 }
 
