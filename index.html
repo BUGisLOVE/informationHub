@@ -2898,6 +2898,47 @@ function mergeSignupRequests(localItems = [], remoteItems = []){
   });
   return Array.from(map.values()).sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
 }
+async function findRemoteSignupRequestByEmail(email, statuses = [], space = currentSpace){
+  if(!firebaseReady || !firebaseDb) return null;
+  const normalizedEmail = normalizeAccountEmail(email || '');
+  if(!normalizedEmail) return null;
+  try{
+    const snapshot = await firebaseApi.get(firebaseApi.ref(firebaseDb, firebasePathForSpace('signupRequests', space)));
+    const data = snapshot.val() || {};
+    const items = Object.entries(data)
+      .map(([id, item]) => normalizeSignupRequest(item, id))
+      .filter(item => normalizeAccountEmail(item.email || '') === normalizedEmail);
+    const filtered = Array.isArray(statuses) && statuses.length
+      ? items.filter(item => statuses.includes(String(item.status || '')))
+      : items;
+    return filtered.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))[0] || null;
+  } catch(error){
+    console.warn('find remote signup request failed', error);
+    return null;
+  }
+}
+async function markSignupRequestApprovedForExistingAuth(request, space = currentSpace){
+  if(!firebaseReady || !firebaseDb || !request?.firebaseKey) return false;
+  const nextStatus = 'approved-existing-auth';
+  try{
+    await firebaseApi.update(
+      firebaseApi.ref(firebaseDb, firebasePathForSpace('signupRequests', space) + '/' + request.firebaseKey),
+      {
+        status: nextStatus,
+        approvedAt: Date.now(),
+        approvedBy: normalizeAccountEmail(currentUser?.email || '') || String(currentUser?.name || 'admin'),
+        approvalMode: 'existing-auth'
+      }
+    );
+    pendingSignups = pendingSignups.filter(item => String(item.id) !== String(request.id));
+    saveSignupRequestsLocal();
+    renderSignupRequests();
+    return true;
+  } catch(error){
+    console.warn('mark signup request approved for existing auth failed', error);
+    return false;
+  }
+}
 function formatRequestDate(value){
   return new Date(Number(value) || Date.now()).toLocaleString('ko-KR', { month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' });
 }
@@ -3388,21 +3429,34 @@ async function initFirebase(){
         const profileSnap = await firebaseApi.get(profileRef);
         const profile = profileSnap.val() || {};
         const email = String(user.email || '').trim().toLowerCase();
-        const fallbackName = String(profile.name || user.displayName || email.split('@')[0] || user.email || '이름없음').trim() || '이름없음';
-        const fallbackRole = String(profile.badge || profile.role || '연구생').trim() || '연구생';
+        const matchingSignupRequest = await findRemoteSignupRequestByEmail(email, [], currentSpace);
+        const approvedExistingAuthRequest = matchingSignupRequest?.status === 'approved-existing-auth' ? matchingSignupRequest : null;
+        const pendingSignupRequest = matchingSignupRequest?.status === 'pending' ? matchingSignupRequest : null;
+        const fallbackName = String(profile.name || approvedExistingAuthRequest?.name || user.displayName || email.split('@')[0] || user.email || '이름없음').trim() || '이름없음';
+        const fallbackRole = String(profile.badge || profile.role || approvedExistingAuthRequest?.role || '연구생').trim() || '연구생';
         const hasProfile = typeof profileSnap.exists === 'function'
           ? profileSnap.exists()
           : Object.keys(profile).length > 0;
         if(!hasProfile){
+          if(pendingSignupRequest){
+            try{ await firebaseApi.signOut(firebaseAuth); } catch(error){}
+            currentUser = null;
+            save('currentUser', currentUser);
+            document.getElementById('auth-error').textContent = '가입 승인 대기 중입니다. master 또는 렙장 승인을 기다려주세요.';
+            setAuthView();
+            return;
+          }
           try{
+            const seededRole = approvedExistingAuthRequest?.role || fallbackRole;
+            const seededField = String(approvedExistingAuthRequest?.field || approvedExistingAuthRequest?.role || '').trim();
             await firebaseApi.set(profileRef, {
               email,
               name: fallbackName,
-              role: fallbackRole,
-              badge: fallbackRole,
-              school: '',
-              department: '',
-              field: '',
+              role: seededRole,
+              badge: seededRole,
+              school: approvedExistingAuthRequest?.school || '',
+              department: approvedExistingAuthRequest?.department || '',
+              field: seededField,
               space: currentSpace,
               createdAt: Date.now(),
               updatedAt: Date.now()
@@ -3410,13 +3464,20 @@ async function initFirebase(){
             Object.assign(profile, {
               email,
               name: fallbackName,
-              role: fallbackRole,
-              badge: fallbackRole,
-              school: '',
-              department: '',
-              field: '',
+              role: seededRole,
+              badge: seededRole,
+              school: approvedExistingAuthRequest?.school || '',
+              department: approvedExistingAuthRequest?.department || '',
+              field: seededField,
               space: currentSpace
             });
+            if(approvedExistingAuthRequest?.firebaseKey){
+              try{
+                await firebaseApi.remove(firebaseApi.ref(firebaseDb, firebasePathForSpace('signupRequests', currentSpace) + '/' + approvedExistingAuthRequest.firebaseKey));
+              } catch(error){
+                console.warn('approved existing auth signup request cleanup failed', error);
+              }
+            }
           } catch(error){
             console.warn('missing user profile auto-create failed', error);
           }
@@ -3882,6 +3943,17 @@ async function approveSignupRequest(id){
       await firebaseApi.signOut(secondaryAuth);
       if(firebaseAppMod.deleteApp) await firebaseAppMod.deleteApp(secondaryApp);
     } catch(error){
+      if(error?.code === 'auth/email-already-in-use'){
+        const approved = await markSignupRequestApprovedForExistingAuth(request, requestSpace);
+        if(approved){
+          alert(
+            `${request.name} 님의 이메일은 이미 Firebase Authentication에 등록되어 있습니다.\n\n` +
+            `이 계정은 '기존 Auth 계정 승인' 상태로 처리했습니다.\n` +
+            `해당 사용자가 다시 로그인하면 users 프로필이 자동 생성되고, 신청 목록에서도 정리됩니다.`
+          );
+          return;
+        }
+      }
       firebaseSyncFailed = true;
       firebaseErrorReason = error?.code || error?.message || '';
       console.warn('firebase signup approval failed', error);
@@ -6691,4 +6763,3 @@ initFirebase().catch(() => {
 </script>
 </body>
 </html>
-
