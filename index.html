@@ -11,32 +11,6 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* firebase realtime 규칙
-
-    {
-  "rules": {
-    "users": { ".read": "auth != null", ".write": "auth != null" },
-    "schedules": { ".read": "auth != null", ".write": "auth != null" },
-    "projects": { ".read": "auth != null", ".write": "auth != null" },
-    "files": { ".read": "auth != null", ".write": "auth != null" },
-    "signupRequests": { ".read": true, ".write": true },
-    "presence": { ".read": "auth != null", ".write": "auth != null" },
-    "suggestions": { ".read": "auth != null", ".write": "auth != null" },
-    "personalPages": { ".read": "auth != null", ".write": "auth != null" },
-    "hub": {
-      "users": { ".read": "auth != null", ".write": "auth != null" },
-      "schedules": { ".read": "auth != null", ".write": "auth != null" },
-      "projects": { ".read": "auth != null", ".write": "auth != null" },
-      "files": { ".read": "auth != null", ".write": "auth != null" },
-      "signupRequests": { ".read": true, ".write": true },
-      "presence": { ".read": "auth != null", ".write": "auth != null" },
-      "suggestions": { ".read": "auth != null", ".write": "auth != null" },
-      "personalPages": { ".read": "auth != null", ".write": "auth != null" }
-    }
-  }
-}
-    */
-
   :root {
     --bg: #0d1217;
     --bg2: #171e25;
