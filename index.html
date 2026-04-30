@@ -3111,6 +3111,10 @@ function getRosterMemberNames(options = {}){
 }
 
 let currentUser = load('currentUser', null);
+if(currentUser && !currentUser.uid){
+  currentUser = null;
+  save('currentUser', currentUser);
+}
 let accounts = load('accounts', [
   { name:'김동현', email:'donghyun@gnu.ac.kr', password:'1234', role:'연구원' },
 ]);
@@ -3179,10 +3183,9 @@ let labCalendar = null;
 let scheduleFilterMode = load('scheduleFilterMode', 'tag');
 let scheduleOwnerFilter = load('scheduleOwnerFilter', 'all');
 
+// 달력 고정
 let events = load('events', [
-  { id:1, title:'주간 미팅', date: fmtDate(today), endDate: fmtDate(today), multiDay:false, time:'10:00', type:'meeting', memo:'진행 상황 공유', color:'#4f9da6' },
-  { id:2, title:'논문 제출 마감', date: fmtDateOffset(3), endDate: fmtDateOffset(3), multiDay:false, time:'23:59', type:'deadline', memo:'', color:'#e26d65' },
-  { id:3, title:'세미나 발표', date: fmtDateOffset(7), endDate: fmtDateOffset(7), multiDay:false, time:'14:00', type:'seminar', memo:'학과 세미나실', color:'#a99be8' },
+ 
 ]);
 
 let tasks = load('tasks', [
@@ -3517,13 +3520,7 @@ async function initFirebase(){
         renderAll();
       } else {
         stopDataSubscriptions();
-        const keepLocalManagerSession = currentUser && !currentUser.uid && isMasterAccount(currentUser);
-        if(keepLocalManagerSession){
-          personalPage = loadPersonalPage(currentUser);
-          setAuthView();
-          startManagerReadOnlySubscriptions(currentSpace);
-          renderAll();
-        } else if(currentUser){
+        if(currentUser){
           if(currentUser?.uid){
             setUserPresence(false).catch(() => {});
           }
@@ -3734,20 +3731,9 @@ async function login(){
   } catch(error){
     const account = accounts.find(a=>a.email.toLowerCase()===loginEmail && a.password===password);
     if(account){
-      if(!isMasterAccount(account)){
-        document.getElementById('auth-error').textContent = 'Firebase 로그인에 실패했습니다. 일반 멤버는 Firebase 인증 계정으로만 로그인할 수 있습니다. 관리자에게 Firebase 등록 상태를 확인해 달라고 요청해 주세요.';
-        return;
-      }
-      currentUser = { name:account.name, email:account.email, role:account.role, school:account.school || '', department:account.department || '', field:account.field || '', space:currentSpace };
-      save('currentUser', currentUser);
-      touchSessionStorage();
-      personalPage = loadPersonalPage(currentUser);
-      document.getElementById('auth-error').textContent = '';
-      document.getElementById('login-password').value = '';
-      setAuthView();
-      setUserPresence(true);
-      if(firebaseReady) startManagerReadOnlySubscriptions(currentSpace);
-      renderAll();
+      document.getElementById('auth-error').textContent = isMasterAccount(account)
+        ? '관리자 계정도 이제 Firebase Authentication으로만 로그인합니다. Authentication에 등록된 관리자 계정인지 확인해 주세요.'
+        : 'Firebase 로그인에 실패했습니다. 일반 멤버는 Firebase Authentication 계정으로만 로그인할 수 있습니다. 관리자에게 Firebase 등록 상태를 확인해 달라고 요청해 주세요.';
       return;
     }
     if(pendingSignups.some(request => request.email === loginEmail)){
@@ -6831,7 +6817,7 @@ setInterval(checkPersonalAlarm, 15000);
 setInterval(clearSensitiveFields, FIELD_CLEAR_INTERVAL_MS);
 setInterval(clearExpiredSessionStorage, FIELD_CLEAR_INTERVAL_MS);
 initFirebase().catch(() => {
-  document.getElementById('auth-error').textContent = 'Firebase 연결에 실패했습니다. 일반 멤버는 Firebase 인증 계정으로 로그인해야 하며, 관리자만 제한적으로 로컬 확인 모드를 사용할 수 있습니다.';
+  document.getElementById('auth-error').textContent = 'Firebase 연결에 실패했습니다. 모든 계정은 Firebase Authentication으로 로그인해야 합니다.';
 });
 </script>
 </body>
