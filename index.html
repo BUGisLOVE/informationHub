@@ -3501,12 +3501,21 @@ async function initFirebase(){
         renderAll();
       } else {
         stopDataSubscriptions();
-        if(currentUser?.uid){
-          setUserPresence(false).catch(() => {});
+        const keepLocalManagerSession = currentUser && !currentUser.uid && isMasterAccount(currentUser);
+        if(keepLocalManagerSession){
+          personalPage = loadPersonalPage(currentUser);
+          setAuthView();
+          startManagerReadOnlySubscriptions(currentSpace);
+          renderAll();
+        } else if(currentUser){
+          if(currentUser?.uid){
+            setUserPresence(false).catch(() => {});
+          }
           currentUser = null;
           save('currentUser', currentUser);
           personalPage = normalizePersonalPage(defaultPersonalPage());
           setAuthView();
+          renderAll();
         }
       }
     });
@@ -3709,6 +3718,10 @@ async function login(){
   } catch(error){
     const account = accounts.find(a=>a.email.toLowerCase()===loginEmail && a.password===password);
     if(account){
+      if(!isMasterAccount(account)){
+        document.getElementById('auth-error').textContent = 'Firebase 로그인에 실패했습니다. 일반 멤버는 Firebase 인증 계정으로만 로그인할 수 있습니다. 관리자에게 Firebase 등록 상태를 확인해 달라고 요청해 주세요.';
+        return;
+      }
       currentUser = { name:account.name, email:account.email, role:account.role, school:account.school || '', department:account.department || '', field:account.field || '', space:currentSpace };
       save('currentUser', currentUser);
       touchSessionStorage();
@@ -3717,8 +3730,7 @@ async function login(){
       document.getElementById('login-password').value = '';
       setAuthView();
       setUserPresence(true);
-      if(firebaseReady && firebaseAuth?.currentUser) startDataSubscriptions(currentSpace);
-      else if(firebaseReady && isMasterAccount(currentUser)) startManagerReadOnlySubscriptions(currentSpace);
+      if(firebaseReady) startManagerReadOnlySubscriptions(currentSpace);
       renderAll();
       return;
     }
@@ -4098,6 +4110,22 @@ function eventColor(e){
 }
 function buildHubScheduleEvents(){
   const out = [];
+  events.forEach(eventItem => {
+    out.push({
+      ...eventItem,
+      id: eventItem.id,
+      title: eventItem.title || '일정',
+      date: eventItem.date,
+      endDate: eventEndDate(eventItem) || eventItem.date,
+      time: eventItem.time || '',
+      type: eventItem.type || 'other',
+      memo: eventItem.memo || '',
+      participants: normalizeEventParticipants(eventItem.participants || []),
+      author: eventOwnerName(eventItem),
+      sourceTaskId: null,
+      customColor: eventItem.customColor || ''
+    });
+  });
   tasks.forEach(task => {
     const baseParticipants = normalizeEventParticipants(task.participants || [task.assignee].filter(Boolean));
     if(task.scheduledDate){
@@ -4133,7 +4161,7 @@ function buildHubScheduleEvents(){
       });
     });
   });
-  return out;
+  return out.sort((a, b) => `${a.date || ''} ${a.time || '00:00'}`.localeCompare(`${b.date || ''} ${b.time || '00:00'}`));
 }
 function eventEndDate(e){ return dateOnly(e.endDate || e.date); }
 function normalizeEndDate(start, end){
@@ -4434,8 +4462,12 @@ function renderCalendar(){
         eventClick(info){
           const id = info.event.extendedProps.eventId || info.event.id;
           if(currentSpace === 'hub'){
-            const taskId = String(id).replace('hub-task-', '');
-            openWorkspaceTaskModal(taskId);
+            const found = scheduleEvents.find(e=>String(e.id)===String(id));
+            if(found?.sourceTaskId){
+              openWorkspaceTaskModal(found.sourceTaskId);
+              return;
+            }
+            openEventDetail(id);
             return;
           }
           openEventDetail(id);
@@ -4460,7 +4492,7 @@ function renderCalendar(){
   const emptyText = scheduleOwnerFilter === 'all' ? '예정된 일정이 없습니다' : `${scheduleOwnerFilterLabel()} 일정이 없습니다`;
   document.getElementById('upcoming-events').innerHTML = upcoming.length===0
     ? `<div style="color:var(--text3);font-size:13px;padding:8px 0">${escapeHtml(emptyText)}</div>`
-    : upcoming.map(e=>`<div class="event-list-item" onclick='${currentSpace === 'hub' ? `openWorkspaceTaskModal(${JSON.stringify(e.sourceTaskId)})` : `openEventDetail(${JSON.stringify(e.id)})`}' style="cursor:pointer"><div class="event-color-dot" style="background:${eventColor(e)}"></div><div class="event-time-col">${formatEventRange(e)}<br>${escapeHtml(e.time || '')}</div><div class="event-list-main"><div class="event-title">${escapeHtml(e.title)}</div><div class="event-meta">${escapeHtml(eventPeopleLabel(e))} · ${escapeHtml(e.memo||typeLabel(e.type))}</div></div><span class="badge ${typeBadge(e.type)}">${currentSpace === 'hub' ? '기록' : typeLabel(e.type)}</span>${currentSpace === 'hub' ? '' : `<button class="event-delete" onclick='event.stopPropagation(); deleteEvent(${JSON.stringify(e.id)})' title="일정 삭제">×</button>`}</div>`).join('');
+    : upcoming.map(e=>`<div class="event-list-item" onclick='${currentSpace === 'hub' && e.sourceTaskId ? `openWorkspaceTaskModal(${JSON.stringify(e.sourceTaskId)})` : `openEventDetail(${JSON.stringify(e.id)})`}' style="cursor:pointer"><div class="event-color-dot" style="background:${eventColor(e)}"></div><div class="event-time-col">${formatEventRange(e)}<br>${escapeHtml(e.time || '')}</div><div class="event-list-main"><div class="event-title">${escapeHtml(e.title)}</div><div class="event-meta">${escapeHtml(eventPeopleLabel(e))} · ${escapeHtml(e.memo||typeLabel(e.type))}</div></div><span class="badge ${typeBadge(e.type)}">${currentSpace === 'hub' ? (e.sourceTaskId ? '기록' : typeLabel(e.type)) : typeLabel(e.type)}</span>${currentSpace === 'hub' ? '' : `<button class="event-delete" onclick='event.stopPropagation(); deleteEvent(${JSON.stringify(e.id)})' title="일정 삭제">×</button>`}</div>`).join('');
 }
 
 function syncScheduleOwnerFilterButton(){
@@ -6758,7 +6790,7 @@ setInterval(checkPersonalAlarm, 15000);
 setInterval(clearSensitiveFields, FIELD_CLEAR_INTERVAL_MS);
 setInterval(clearExpiredSessionStorage, FIELD_CLEAR_INTERVAL_MS);
 initFirebase().catch(() => {
-  document.getElementById('auth-error').textContent = 'Firebase 연결 전입니다. 임시 로컬 계정으로도 확인할 수 있습니다.';
+  document.getElementById('auth-error').textContent = 'Firebase 연결에 실패했습니다. 일반 멤버는 Firebase 인증 계정으로 로그인해야 하며, 관리자만 제한적으로 로컬 확인 모드를 사용할 수 있습니다.';
 });
 </script>
 </body>
