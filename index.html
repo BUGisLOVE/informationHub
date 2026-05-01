@@ -2122,6 +2122,25 @@
     line-height: 1.6;
     margin-top: -4px;
   }
+  /* 회원가입 모달 안내 박스 — 비밀번호 재설정 안내 등 강조용 */
+  .signup-info-note {
+    margin-top: 8px;
+    padding: 10px 12px;
+    background: var(--accent-bg);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius);
+    font-size: 12px;
+    color: var(--text2);
+    line-height: 1.55;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .signup-info-note .signup-info-icon {
+    flex-shrink: 0;
+    color: var(--accent);
+    font-weight: 700;
+  }
   #datepicker-modal {
     z-index: 220;
   }
@@ -3322,6 +3341,10 @@
     <div class="form-group">
       <label class="form-label">아이디</label>
       <input class="form-input" id="signup-email" type="text" placeholder="아이디만 입력">
+      <div class="signup-info-note" id="signup-email-note">
+        <span class="signup-info-icon" aria-hidden="true">💡</span>
+        <span>비밀번호 재설정 기능을 사용하려면 <strong>본인이 사용하는 이메일</strong>로 가입해 주세요. (예: <code>name@gmail.com</code>)</span>
+      </div>
     </div>
     <div class="form-group">
       <label class="form-label">비밀번호</label>
