@@ -4671,7 +4671,30 @@ async function signup(){
   const protectedSignupEmails = new Set(defaultAdminAccounts(currentSpace).map(account => normalizeAccountEmail(account.email)));
   const localAccountIndex = accounts.findIndex(account => normalizeAccountEmail(account.email || '') === normalizedSignupEmail);
   const memberExists = MEMBERS.some(member => normalizeAccountEmail(member.email || '') === normalizedSignupEmail);
-  const pendingExists = pendingSignups.some(request => normalizeAccountEmail(request.email || '') === normalizedSignupEmail);
+
+  // ❗ 거절 후 재신청 차단 버그 수정:
+  // 신청자는 아직 로그인 상태가 아니므로 signupRequests onValue 리스너가 붙어 있지 않다.
+  // 그래서 마스터가 거절해 Firebase 에서 지워져도, 신청자 브라우저의 localStorage(`pendingSignups`)에는
+  // 옛 신청 정보가 그대로 남아 재신청이 차단되는 문제가 있었다.
+  // → 로컬 캐시만 믿지 말고 Firebase 를 진실 기준으로 삼아 다시 확인하고, stale 로컬 항목은 정리한다.
+  let pendingExists = false;
+  try{
+    await initFirebase();
+    const remotePending = await findRemoteSignupRequestByEmail(signupEmail, ['pending'], currentSpace);
+    if(remotePending){
+      pendingExists = true;
+    } else {
+      // Firebase 에 pending 이 없으면 로컬 stale 항목 정리.
+      const beforeCount = pendingSignups.length;
+      pendingSignups = pendingSignups.filter(request => normalizeAccountEmail(request.email || '') !== normalizedSignupEmail);
+      if(pendingSignups.length !== beforeCount) saveSignupRequestsLocal();
+    }
+  } catch(error){
+    console.warn('remote pending signup check failed', error);
+    // Firebase 조회 자체가 실패하면 안전하게 로컬 캐시 기준으로 판단.
+    pendingExists = pendingSignups.some(request => normalizeAccountEmail(request.email || '') === normalizedSignupEmail);
+  }
+
   if(localAccountIndex >= 0 && !memberExists && !pendingExists && !protectedSignupEmails.has(normalizedSignupEmail)){
     accounts = accounts.filter((_, index) => index !== localAccountIndex);
     save('accounts', accounts);
