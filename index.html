@@ -3440,12 +3440,21 @@ let currentSpace = 'hub';
 try { localStorage.setItem(KEY + 'appSpace', 'hub'); } catch(error){}
 const MASTER_ACCOUNT_EMAIL = 'master@ush.kr';
 const MASTER_ACCOUNT_ROLE = 'master';
+// 🔒 관리자(master) 권한이 부여되는 이메일 목록.
+// 이 이메일들은 반드시 Firebase Auth에 별도로 등록되어 있어야 하고, 비밀번호는 Firebase Auth가 관리합니다.
+// 코드/저장소/localStorage 어디에도 비밀번호를 두지 않습니다.
+const MASTER_ACCOUNT_EMAILS = new Set([
+  'master@ush.kr',
+  'yesmandyb@ush.kr'
+]);
 const MANAGER_ALIAS_NAMES = ['최준혁', '준혁'];
 const MANAGER_ALIAS_EMAIL_IDS = ['junhyeok', 'labhead', 'yesmandyb'];
 function defaultAdminAccounts(){
+  // 🔒 관리자 시드 계정은 표시용 메타데이터(이름/소속/역할)만 둡니다.
+  // 인증은 전적으로 Firebase Auth에서 이루어지며, 평문 비밀번호는 코드에 절대 두지 않습니다.
   return [
-    { name:'김동현', email:'master@ush.kr', password:'kshkak1732!', role:'관리자 계정', school:'대학 공유 허브', department:'통합 공유 공간', field:'시스템 관리자' },
-    { name:'최준혁', email:'yesmandyb@ush.kr', password:'david0714!@', role:'관리자 계정', school:'대학 공유 허브', department:'통합 공유 공간', field:'운영 총괄' }
+    { name:'김동현', email:'master@ush.kr', role:'관리자 계정', school:'대학 공유 허브', department:'통합 공유 공간', field:'시스템 관리자' },
+    { name:'최준혁', email:'yesmandyb@ush.kr', role:'관리자 계정', school:'대학 공유 허브', department:'통합 공유 공간', field:'운영 총괄' }
   ];
 }
 function normalizeSpace(space){
@@ -3963,6 +3972,8 @@ function ensureAdminAccounts(){
     const existingAccountIndex = accounts.findIndex(account => normalizeAccountEmail(account.email) === adminEmail);
     if(existingAccountIndex >= 0){
       accounts[existingAccountIndex] = { ...accounts[existingAccountIndex], ...admin };
+      // 🔒 이전 빌드의 localStorage 에 평문 비밀번호가 남아 있을 수 있으므로 매번 강제로 제거.
+      delete accounts[existingAccountIndex].password;
     } else {
       accounts.push({ ...admin });
     }
@@ -4064,7 +4075,8 @@ function normalizeManagerToken(value){
   return String(value || '').trim().toLowerCase();
 }
 function isDesignatedMasterEmail(email){
-  return normalizeAccountEmail(email) === MASTER_ACCOUNT_EMAIL;
+  // 🔒 명시적으로 등록된 master 이메일 목록만 인정. (이전엔 단일 상수만 검사)
+  return MASTER_ACCOUNT_EMAILS.has(normalizeAccountEmail(email));
 }
 function isMasterAccount(user = currentUser){
   const role = normalizeManagerToken(user?.role);
