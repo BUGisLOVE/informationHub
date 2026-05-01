@@ -3705,13 +3705,17 @@ function normalizeSignupRequest(item, fallbackId = ''){
     status: String(item?.status || 'pending')
   };
 }
+function stripSignupRequestPassword(item, fallbackId = ''){
+  const normalized = normalizeSignupRequest(item, fallbackId);
+  return { ...normalized, password:'' };
+}
 function loadSignupRequests(){
   return load('pendingSignups', [])
-    .map((item, index) => normalizeSignupRequest(item, `local-${index}`))
+    .map((item, index) => stripSignupRequestPassword(item, `local-${index}`))
     .filter(item => item.email && item.name && item.status === 'pending' && item.space === 'hub');
 }
 function saveSignupRequestsLocal(){
-  save('pendingSignups', pendingSignups);
+  save('pendingSignups', pendingSignups.map((item, index) => stripSignupRequestPassword(item, item?.firebaseKey || item?.id || `local-${index}`)));
 }
 function mergeSignupRequests(localItems = [], remoteItems = []){
   const map = new Map();
@@ -3950,10 +3954,9 @@ if(currentUser && !currentUser.uid){
   currentUser = null;
   save('currentUser', currentUser);
 }
-let accounts = load('accounts', [
-  { name:'김동현', email:'donghyun@gnu.ac.kr', password:'1234', role:'연구원' },
-]);
+let accounts = load('accounts', []);
 let pendingSignups = loadSignupRequests();
+saveSignupRequestsLocal();
 
 
 /* 멤버 현황 */
@@ -4991,7 +4994,13 @@ function renderDashboard(){
 
   // Members quick
   const mq = document.getElementById('member-quick');
-  mq.innerHTML = visibleMembers.map(m=>`<div style="display:flex;align-items:center;gap:7px;padding:6px 10px;background:var(--bg3);border-radius:8px;cursor:pointer" onclick="navigate('members')"><div class="avatar ${m.color}" style="width:28px;height:28px;font-size:10px">${m.initials}</div><div><div style="font-size:12px;font-weight:500">${m.name}</div><div style="display:flex;align-items:center;gap:4px;margin-top:2px"><div class="status-dot status-${m.status}"></div><span style="font-size:10px;color:var(--text3)">${statusLabel(m.status)}</span></div></div></div>`).join('');
+  mq.innerHTML = visibleMembers.map(m=>{
+    const safeColor = safeMemberColorClass(m.color);
+    const safeStatus = safeMemberStatus(m.status);
+    const safeInitials = escapeHtml(String(m.initials || '').slice(0, 2));
+    const safeName = escapeHtml(m.name || '');
+    return `<div style="display:flex;align-items:center;gap:7px;padding:6px 10px;background:var(--bg3);border-radius:8px;cursor:pointer" onclick="navigate('members')"><div class="avatar ${safeColor}" style="width:28px;height:28px;font-size:10px">${safeInitials}</div><div><div style="font-size:12px;font-weight:500">${safeName}</div><div style="display:flex;align-items:center;gap:4px;margin-top:2px"><div class="status-dot status-${safeStatus}"></div><span style="font-size:10px;color:var(--text3)">${escapeHtml(statusLabel(safeStatus))}</span></div></div></div>`;
+  }).join('');
   renderHubQuickLinks();
 }
 
@@ -5681,16 +5690,23 @@ function openFileDetail(id){
 function renderMembers(){
   const canManage = isMasterAccount();
   const visibleMembers = currentSpaceMembers();
-  document.getElementById('member-grid').innerHTML = visibleMembers.map(m=>`
+  document.getElementById('member-grid').innerHTML = visibleMembers.map(m=>{
+    const safeColor = safeMemberColorClass(m.color);
+    const safeStatus = safeMemberStatus(m.status);
+    const safeInitials = escapeHtml(String(m.initials || '').slice(0, 2));
+    const safeName = escapeHtml(m.name || '');
+    const safeRole = escapeHtml(m.role || '');
+    const safeTags = renderSafeMemberTags(m.tags);
+    return `
     <div class="member-card ${canManage ? 'manageable' : ''}" onclick='openMemberProfile(${JSON.stringify(m.id)})' style="cursor:pointer">
-      <div class="member-avatar ${m.color}">${m.initials}</div>
-      <div class="member-name">${m.name}</div>
-      <div class="member-role">${m.role}</div>
+      <div class="member-avatar ${safeColor}">${safeInitials}</div>
+      <div class="member-name">${safeName}</div>
+      <div class="member-role">${safeRole}</div>
       <div class="member-status">
-        <div class="status-dot status-${m.status}"></div>
-        ${statusLabel(m.status)}
+        <div class="status-dot status-${safeStatus}"></div>
+        ${escapeHtml(statusLabel(safeStatus))}
       </div>
-      <div class="member-tags">${m.tags.map(t=>`<span class="badge badge-gray">${t}</span>`).join('')}</div>
+      <div class="member-tags">${safeTags}</div>
       <div class="member-meta-list">
         <div class="member-meta-row"><strong>학교</strong>${escapeHtml(m.school || '-')}</div>
         <div class="member-meta-row"><strong>학과</strong>${escapeHtml(m.department || '-')}</div>
@@ -5703,7 +5719,8 @@ function renderMembers(){
           <button class="btn btn-secondary btn-sm" type="button" onclick='event.stopPropagation(); removeMember(${JSON.stringify(m.id)})'>인원 삭제</button>
         </div>
       ` : ''}
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 function openMemberProfile(id){
@@ -6991,6 +7008,18 @@ function escapeHtml(value){
 
 function escapeAttr(value){
   return escapeHtml(value).replace(/`/g, '&#096;');
+}
+function safeMemberStatus(value){
+  const normalized = String(value || 'offline').trim().toLowerCase();
+  return ['online', 'away', 'busy', 'offline'].includes(normalized) ? normalized : 'offline';
+}
+function safeMemberColorClass(value){
+  const normalized = String(value || '').trim();
+  return /^av-(blue|green|purple|amber|red)$/.test(normalized) ? normalized : 'av-blue';
+}
+function renderSafeMemberTags(tags = []){
+  if(!Array.isArray(tags)) return '';
+  return tags.map(tag => `<span class="badge badge-gray">${escapeHtml(tag)}</span>`).join('');
 }
 
 let defaultTaskStatus = 'todo';
