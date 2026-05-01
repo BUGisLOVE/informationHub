@@ -875,7 +875,7 @@
   .detail-value { color: var(--text); font-size: 13px; min-width: 0; overflow-wrap: anywhere; line-height: 1.55; }
 
   /* === KANBAN === */
-  .kanban { display: grid; grid-template-columns: repeat(3, minmax(260px, 1fr)); gap: 16px; align-items: start; max-width: 1480px; }
+  .kanban { display: block; width: 100%; }
   .kanban-col { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px; min-width: 0; }
   .kanban-col-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
   .kanban-col-title { font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 7px; }
@@ -1807,12 +1807,92 @@
 
   .task-card-image {
     width: 100%;
-    height: 130px;
+    aspect-ratio: 3 / 4;       /* 🎨 포스터 비율(세로형). 이전엔 height:130px 였음 */
+    height: auto;
     object-fit: cover;
     border-radius: calc(var(--radius) - 1px);
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     border: 1px solid var(--border);
     display: block;
+    background: var(--bg2);
+  }
+  /* 🎨 워크스페이스 보드: 카드들을 3x3 가로 그리드로 펼쳐 보여줌. */
+  .kanban-col-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    align-items: start;
+    margin-bottom: 12px;
+  }
+  @media (max-width: 900px) {
+    .kanban-col-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 520px) {
+    .kanban-col-grid { grid-template-columns: 1fr; }
+  }
+  .kanban-col-grid .task-card {
+    margin-bottom: 0;          /* 그리드 gap이 간격을 처리하므로 마진 제거 */
+    padding: 14px;
+  }
+  /* 🖼️ 포스터 컨테이너: 이미지가 있을 땐 위에 깔리고, 없거나 로드 실패 시 fallback이 보임. */
+  .task-card-poster {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    border-radius: calc(var(--radius) - 1px);
+    margin-bottom: 12px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--bg2) 0%, var(--bg4) 100%);
+  }
+  .task-card-poster .task-card-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    z-index: 1;
+  }
+  .task-card-poster-fallback {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: var(--text3);
+    pointer-events: none;
+  }
+  .task-card-poster-fallback::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 28% 22%, rgba(95,194,204,.10), transparent 55%),
+      radial-gradient(circle at 78% 82%, rgba(185,167,255,.08), transparent 60%);
+    pointer-events: none;
+  }
+  .task-card-poster-fallback svg {
+    width: 36%;
+    height: auto;
+    opacity: 0.55;
+    position: relative;
+  }
+  .task-card-poster-fallback-label {
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--text3);
+    opacity: 0.75;
+    position: relative;
+    text-align: center;
+    padding: 0 10px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .kanban-pagination {
     display: flex;
@@ -3094,6 +3174,10 @@
             <input class="form-input" id="workspace-todo-link" placeholder="https://...">
             <button class="btn btn-secondary btn-sm" type="button" onclick="openWorkspaceLink(document.getElementById('workspace-todo-link').value)">열기</button>
           </div>
+        </div>
+        <div class="form-group" style="margin-top:14px;margin-bottom:0">
+          <label class="form-label">대표 이미지 URL <span style="color:var(--text3);font-weight:400">(공모전·대회 포스터 등, 선택)</span></label>
+          <input class="form-input" id="workspace-todo-image-url" placeholder="https://example.com/poster.jpg">
         </div>
         <div class="form-group" style="margin-top:14px;margin-bottom:0">
           <label class="form-label">카드 메모</label>
@@ -5447,9 +5531,20 @@ function renderKanban(){
     const cardClick = isDoneTask
       ? `openWorkspaceDoneTaskModal(${JSON.stringify(t.id)})`
       : (isTodoTask ? `openWorkspaceTodoTaskModal(${JSON.stringify(t.id)})` : `openWorkspaceTaskPage(${JSON.stringify(t.id)})`);
+    const fallbackLabel = catLabel[t.category] || t.category || '포스터';
+    const posterFallback = `<div class="task-card-poster-fallback" aria-hidden="true">`
+      + `<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="8" width="36" height="32" rx="3"/><circle cx="17" cy="20" r="3"/><path d="M42 30L31 22 14 38"/></svg>`
+      + `<div class="task-card-poster-fallback-label">${escapeHtml(fallbackLabel)}</div>`
+      + `</div>`;
+    const posterHtml = `<div class="task-card-poster">`
+      + (t.imageUrl
+          ? `<img class="task-card-image" src="${escapeAttr(t.imageUrl)}" alt="포스터" onerror="this.remove()">`
+          : '')
+      + posterFallback
+      + `</div>`;
     return `
       <div class="task-card ${String(selectedWorkspaceTaskId) === String(t.id) ? 'active' : ''}" onclick='${cardClick}'>
-        ${t.imageUrl ? `<img class="task-card-image" src="${escapeAttr(t.imageUrl)}" alt="포스터" onerror="this.style.display='none'">` : ''}
+        ${posterHtml}
         <div class="task-card-head">
           <div class="task-title">${escapeHtml(t.title)}</div>
           ${t.link ? `<button class="task-card-link" type="button" title="워크스페이스 열기" onclick='event.stopPropagation(); openWorkspaceLink(${JSON.stringify(t.link)})'><svg viewBox="0 0 16 16" fill="currentColor"><path d="M6.354 9.646a.5.5 0 010 .708l-2 2a2 2 0 102.828 2.828l2-2a.5.5 0 11.708.708l-2 2a3 3 0 11-4.243-4.243l2-2a.5.5 0 01.707 0z"/><path d="M9.646 6.354a.5.5 0 010-.708l2-2a3 3 0 114.243 4.243l-2 2a.5.5 0 01-.708-.708l2-2a2 2 0 10-2.828-2.828l-2 2a.5.5 0 01-.707 0z"/><path d="M5.5 10.5a.5.5 0 010-.707l5-5a.5.5 0 01.707.707l-5 5a.5.5 0 01-.707 0z"/></svg></button>` : ''}
@@ -5491,7 +5586,9 @@ function renderKanban(){
       <div class="kanban-col-title"><div style="width:8px;height:8px;border-radius:50%;background:${col.dot}"></div>${col.label}</div>
       <span class="kanban-count">${colTasks.length}</span>
     </div>
-    ${cards || `<div class="workspace-empty-note" style="padding:28px 16px;text-align:center">${escapeHtml(boardConfig.empty)}</div>`}
+    ${cards
+      ? `<div class="kanban-col-grid">${cards}</div>`
+      : `<div class="workspace-empty-note" style="padding:28px 16px;text-align:center">${escapeHtml(boardConfig.empty)}</div>`}
     <div style="text-align:center;padding:8px 0;cursor:pointer;color:var(--text3);font-size:12px" onclick="openTaskModalStatus('${col.id}')">+ 추가</div>
     ${paginationHtml}
   </div>`;
@@ -6889,7 +6986,7 @@ function escapeAttr(value){
 
 let defaultTaskStatus = 'todo';
 let kanbanPageState = {}; // { colId: pageNumber (0-indexed) }
-const KANBAN_PAGE_SIZE = 4;
+const KANBAN_PAGE_SIZE = 9; // 3x3 그리드 (한 페이지 9개)
 const WORKSPACE_BOARD_PAGES = {
   'workspace-todo': {
     status:'todo',
@@ -6931,7 +7028,10 @@ function setCurrentWorkspaceBoardPage(page){
 }
 setCurrentWorkspaceBoardPage(currentWorkspaceBoardPage);
 function openTaskModal(){
-  defaultTaskStatus='todo';
+  // 🐛 버그 수정: 현재 보고 있는 탭(제안 및 구인 / 작업 진행 / 작업 완료)의 상태로 추가하도록.
+  // 예전에는 무조건 'todo'로 강제돼서 "작업 진행" 탭에서 추가해도 "제안 및 구인"으로 튕겨나갔음.
+  const config = workspaceBoardConfig();
+  defaultTaskStatus = (config && config.status) || 'todo';
   populateMemberSelects();
   document.getElementById('task-participant-limit').value = '';
   renderMemberChecks('task-participants', currentUser?.name ? [currentUser.name] : []);
@@ -7004,8 +7104,11 @@ function addTask(){
   document.getElementById('task-detail').value='';
   document.getElementById('task-participant-limit').value='';
   if(document.getElementById('task-image-url')) document.getElementById('task-image-url').value='';
+  // 🐛 버그 수정: 새 작업이 들어갈 탭으로 보드 페이지를 동기화. (좌측 네비게이션도 같이 갱신)
+  setCurrentWorkspaceBoardPage(workspaceBoardPageForStatus(defaultTaskStatus));
   renderKanban();
   renderDashboard();
+  navigate(currentWorkspaceBoardPage);
 }
 
 function openWorkspaceTaskModal(id){
@@ -7603,11 +7706,13 @@ function openWorkspaceTodoTaskModal(id){
     <span class="badge badge-gray">${escapeHtml(task.scheduledDate || '-')}</span>
   `;
   document.getElementById('workspace-todo-link').value = task.link || '';
+  document.getElementById('workspace-todo-image-url').value = task.imageUrl || '';
   document.getElementById('workspace-todo-detail').value = task.detail || '';
   document.getElementById('workspace-todo-comment-list').innerHTML = renderWorkspaceTodoTaskComments(task);
   const commentInput = document.getElementById('workspace-todo-comment-input');
   if(commentInput) commentInput.value = '';
   setWorkspaceEditorElementState(document.getElementById('workspace-todo-link'), canManage);
+  setWorkspaceEditorElementState(document.getElementById('workspace-todo-image-url'), canManage);
   setWorkspaceEditorElementState(document.getElementById('workspace-todo-detail'), canManage);
   setWorkspaceEditorElementState(commentInput, canComment);
   setWorkspaceEditorElementState(document.getElementById('workspace-todo-comment-submit-btn'), canComment);
@@ -7627,17 +7732,24 @@ function saveWorkspaceTodoTask(){
     return;
   }
   const link = String(document.getElementById('workspace-todo-link')?.value || '').trim();
+  const imageUrl = String(document.getElementById('workspace-todo-image-url')?.value || '').trim();
   const detail = String(document.getElementById('workspace-todo-detail')?.value || '').trim();
   if(link && !/^https?:\/\//i.test(link)){
     alert('대표 링크는 http:// 또는 https://로 시작해야 합니다.');
     return;
   }
+  if(imageUrl && !/^https?:\/\//i.test(imageUrl)){
+    alert('이미지 URL은 http:// 또는 https://로 시작해야 합니다.');
+    return;
+  }
   task.link = link;
+  task.imageUrl = imageUrl;
   task.detail = detail;
   save('tasks', tasks);
   if(firebaseReady && firebaseDb && typeof task.id === 'string'){
     firebaseApi.update(firebaseApi.ref(firebaseDb, firebasePath('projects') + '/' + task.id), {
       link,
+      imageUrl,
       detail,
       updatedAt: Date.now()
     }).catch(err => console.warn('workspace todo save failed', err));
