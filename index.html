@@ -127,6 +127,48 @@
   body[data-theme='light'] .admin-table tr:hover td { background: var(--bg4); }
   body[data-theme='light'] .cal-day:hover { background: var(--bg4); }
 
+  /* === LIGHT MODE — 표면 깊이 & 그림자 보정 ===
+     다크는 글로우로 깊이를 주지만 라이트에선 그게 안 먹힌다. 검정 기반 그림자
+     (rgba(0,0,0,.5))는 흰 배경에서 무겁고 탁하므로, 쿨 슬레이트 + 브랜드 틴트의
+     부드러운 다층 그림자로 교체한다. 흰 카드엔 옅은 정지 elevation을 줘 쿨그레이
+     페이지(--bg)에서 떠 보이게 한다. (인사 위젯은 자체 3D 인터랙션이라 제외) */
+  body[data-theme='light'] { background: linear-gradient(180deg, #edf2f7, #e3ebf2); }
+  body[data-theme='light'] .card:not(.dash-hello-card),
+  body[data-theme='light'] .stat-card,
+  body[data-theme='light'] .dashboard-award-panel,
+  body[data-theme='light'] .member-card,
+  body[data-theme='light'] .ws-header-card,
+  body[data-theme='light'] .ws-section,
+  body[data-theme='light'] .ws-summary-card,
+  body[data-theme='light'] .res-link {
+    box-shadow: 0 1px 2px rgba(30,52,70,.05), 0 6px 16px -10px rgba(30,52,70,.12);
+  }
+  body[data-theme='light'] .member-card:hover {
+    box-shadow: 0 14px 32px -18px color-mix(in srgb, var(--accent) 26%, transparent), 0 6px 16px -10px rgba(30,52,70,.16);
+  }
+  body[data-theme='light'] .task-card:hover {
+    box-shadow: 0 12px 26px -16px color-mix(in srgb, var(--accent) 30%, transparent), 0 4px 12px -8px rgba(30,52,70,.14);
+  }
+  body[data-theme='light'] .request-card:hover {
+    box-shadow: 0 10px 24px -16px color-mix(in srgb, var(--accent) 26%, transparent), 0 4px 12px -8px rgba(30,52,70,.12);
+  }
+  body[data-theme='light'] .card:not(.dash-hello-card):hover {
+    box-shadow: 0 14px 32px -16px color-mix(in srgb, var(--accent) 30%, transparent), 0 6px 16px -10px rgba(30,52,70,.16);
+  }
+  body[data-theme='light'] .stat-card:hover {
+    box-shadow: 0 13px 28px -16px color-mix(in srgb, var(--c, var(--accent)) 36%, transparent), 0 5px 14px -10px rgba(30,52,70,.16);
+  }
+  body[data-theme='light'] .res-link:hover {
+    box-shadow: 0 14px 30px -16px color-mix(in srgb, var(--rc, var(--accent)) 42%, transparent), 0 5px 14px -10px rgba(30,52,70,.14);
+  }
+  /* 흰 사이드바를 흰 카드 영역과 분리하는 가는 그림자 */
+  body[data-theme='light'] .sidebar {
+    box-shadow: 1px 0 0 rgba(30,52,70,.04), 4px 0 16px -12px rgba(30,52,70,.18);
+  }
+  /* 네비 아이콘 칩이 흰 사이드바에서 거의 안 보이던 것 — inset 윤곽(박스모델 불변) */
+  body[data-theme='light'] .nav-item > svg { box-shadow: inset 0 0 0 1px var(--border); }
+  body[data-theme='light'] .nav-item.active > svg { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent); }
+
   html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Pretendard', 'Malgun Gothic', sans-serif; font-size: 14px; letter-spacing: 0; }
 
   /* === AUTH === */
@@ -457,7 +499,7 @@
     .shape { animation: none !important; }
   }
 
-  .page-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-width: 0; }
+  .page-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-width: 0; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
   .page-header > div:first-child { min-width: 0; }
   .page-title { font-size: 20px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .page-sub { font-size: 13px; color: var(--text2); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -735,7 +777,7 @@
     user-select: none;
     grid-row: 1;
   }
-  .cal-day:hover { background: #26313a; }
+  .cal-day:hover { background: var(--bg3); }
   .cal-day.drag-range {
     background: rgba(79,157,166,.22);
     box-shadow: inset 0 0 0 1px rgba(79,157,166,.5);
@@ -979,9 +1021,9 @@
   .task-card {
     background: var(--bg3); border: 1px solid var(--border);
     border-radius: var(--radius); padding: 16px 18px;
-    margin-bottom: 10px; cursor: pointer; transition: border-color 0.15s, transform 0.1s;
+    margin-bottom: 10px; cursor: pointer; transition: border-color .16s, transform .16s, box-shadow .16s;
   }
-  .task-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .task-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 12px 26px -18px rgba(0, 0, 0, .55); }
   .task-card.active { border-color: var(--accent); box-shadow: 0 0 0 1px rgba(95,194,204,.22) inset; }
   .task-card:last-child { margin-bottom: 0; }
   .task-title { font-size: 14px; font-weight: 600; margin-bottom: 6px; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
@@ -1492,9 +1534,9 @@
   .file-table th:nth-child(4), .file-table td:nth-child(4) { width: 13%; }
   .file-table th:nth-child(5), .file-table td:nth-child(5) { width: 8%; }
   .file-table th:nth-child(6), .file-table td:nth-child(6) { width: 13%; }
-  .file-table th { font-size: 12px; color: var(--text3); font-weight: 500; text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--border); }
-  .file-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .file-table tr:hover td { background: #26313a; }
+  .file-table th { font-size: 11px; color: var(--text3); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; text-align: left; padding: 10px 12px; background: var(--bg3); border-bottom: 1px solid var(--border); }
+  .file-table td { padding: 11px 12px; border-bottom: 1px solid var(--border); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; transition: background .14s; }
+  .file-table tr:hover td { background: var(--bg3); }
   .file-row { cursor: pointer; }
   .file-icon { display: flex; align-items: center; gap: 9px; min-width: 0; }
   .file-info { min-width: 0; overflow: hidden; }
@@ -1639,9 +1681,14 @@
   .member-card {
     background: var(--bg2); border: 1px solid var(--border);
     border-radius: var(--radius-lg); padding: 18px 14px;
-    text-align: center; transition: border-color 0.15s;
+    text-align: center;
+    transition: transform .2s cubic-bezier(.22, 1, .36, 1), box-shadow .2s ease, border-color .2s ease;
   }
-  .member-card:hover { border-color: var(--accent); }
+  .member-card:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+    box-shadow: 0 16px 36px -24px rgba(0, 0, 0, .5);
+  }
   .member-avatar {
     width: 52px; height: 52px; border-radius: 50%; margin: 0 auto 10px;
     display: flex; align-items: center; justify-content: center;
@@ -1670,6 +1717,11 @@
     border-radius: var(--radius-lg);
     background: var(--bg3);
     padding: 14px;
+    transition: border-color .16s, box-shadow .16s;
+  }
+  .request-card:hover {
+    border-color: color-mix(in srgb, var(--accent) 38%, var(--border));
+    box-shadow: 0 10px 24px -18px rgba(0, 0, 0, .5);
   }
   .request-card-head {
     display: flex;
@@ -1702,13 +1754,14 @@
     font-size: 13px;
     vertical-align: middle;
   }
-  .admin-table th { color: var(--text3); font-size: 12px; font-weight: 500; }
+  .admin-table td { transition: background .14s; }
+  .admin-table th { color: var(--text3); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; background: var(--bg3); }
   .admin-table th:nth-child(1), .admin-table td:nth-child(1) { width: 15%; }
   .admin-table th:nth-child(2), .admin-table td:nth-child(2) { width: 15%; }
   .admin-table th:nth-child(3), .admin-table td:nth-child(3) { width: 24%; }
   .admin-table th:nth-child(4), .admin-table td:nth-child(4) { width: 12%; }
   .admin-table th:nth-child(5), .admin-table td:nth-child(5) { width: 34%; }
-  .admin-table tr:hover td { background: #26313a; }
+  .admin-table tr:hover td { background: var(--bg3); }
   .admin-actions { display: flex; flex-wrap: wrap; gap: 6px; }
 
   /* === MODAL === */
@@ -2190,26 +2243,44 @@
 
   /* === WORKSPACE DETAIL REDESIGN === */
   .ws-header-card {
+    position: relative;
+    overflow: hidden;
     background: var(--bg2);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
-    padding: 16px 20px;
+    padding: 18px 22px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 16px;
     flex-wrap: wrap;
   }
-  .ws-header-title-input {
+  /* 카테고리 색 강조바 (style 의 --ws-accent 상속) */
+  .ws-header-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    background: var(--ws-accent, var(--accent));
+  }
+  .ws-header-main {
     flex: 1;
-    min-width: 160px;
-    font-size: 16px;
-    font-weight: 600;
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+  }
+  .ws-header-title-input {
+    width: 100%;
+    min-width: 0;
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -.01em;
     background: transparent;
     border: none;
-    border-bottom: 1.5px solid var(--border2);
+    border-bottom: 1.5px solid transparent;
     border-radius: 0;
     color: var(--text);
-    padding: 4px 0;
+    padding: 2px 0;
     font-family: 'Pretendard', sans-serif;
     transition: border-color .15s;
   }
@@ -2233,7 +2304,7 @@
     align-items: start;
   }
   .ws-left { display: grid; gap: 14px; }
-  .ws-right { display: grid; gap: 14px; }
+  .ws-right { display: grid; gap: 14px; align-self: start; position: sticky; top: 16px; }
   .ws-section {
     background: var(--bg2);
     border: 1px solid var(--border);
@@ -2262,6 +2333,27 @@
     border: 1px solid var(--border);
     flex-shrink: 0;
   }
+  /* 진행 중 작업 모달 — URL 이미지 미리보기 */
+  .ws-ip-preview {
+    margin-top: 14px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--bg3);
+  }
+  .ws-ip-image {
+    display: block;
+    width: 100%;
+    max-height: 440px;
+    object-fit: contain;
+    background: var(--bg);
+  }
+  .ws-ip-empty {
+    padding: 52px 16px;
+    text-align: center;
+    color: var(--text3);
+    font-size: 13px;
+  }
   .ws-field-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -2273,10 +2365,28 @@
   .ws-share-text-section .workspace-detail-text {
     min-height: 460px;
   }
-  .ws-manage-actions {
+  /* 기본정보 키-값 행 — 구분선으로 정돈된 스펙 시트 느낌 */
+  .ws-kv-list { display: grid; }
+  .ws-kv {
     display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+  }
+  .ws-kv:last-child { border-bottom: none; padding-bottom: 0; }
+  .ws-kv:first-child { padding-top: 0; }
+  .ws-kv > span { color: var(--text3); flex-shrink: 0; }
+  .ws-kv > strong {
+    color: var(--text);
+    font-weight: 600;
+    text-align: right;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .ws-summary-card {
     background: var(--bg2);
@@ -2411,6 +2521,7 @@
   }
   @media (max-width: 960px) {
     .ws-body { grid-template-columns: 1fr; }
+    .ws-right { position: static; top: auto; }
     .ws-share-text-section .workspace-detail-text { min-height: 320px; }
     .workspace-manage-grid.two-col { grid-template-columns: 1fr; }
     .workspace-todo-modal-grid { grid-template-columns: 1fr; }
@@ -3776,6 +3887,21 @@
       <button class="btn btn-secondary" type="button" onclick="closeModal('workspace-done-modal')">닫기</button>
       <button class="btn btn-secondary" type="button" id="workspace-done-delete-btn" style="display:none;color:var(--red);border-color:var(--red)" onclick="deleteWorkspaceTaskFromDoneModal()">작업 삭제</button>
       <button class="btn btn-primary" type="button" id="workspace-done-save-btn" onclick="saveWorkspaceDoneTask()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- WORKSPACE IN-PROGRESS MODAL — URL 이미지 미리보기 후 상세페이지로 이동 -->
+<div class="modal-overlay" id="workspace-inprogress-modal">
+  <div class="modal" style="width:560px;max-width:96vw">
+    <input type="hidden" id="workspace-inprogress-task-id">
+    <div class="modal-title" id="workspace-inprogress-modal-title">진행 중 작업</div>
+    <div class="workspace-manage-note" id="workspace-inprogress-modal-note"></div>
+    <div class="ws-ip-preview" id="workspace-inprogress-image-wrap"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" type="button" onclick="closeModal('workspace-inprogress-modal')">닫기</button>
+      <button class="btn btn-secondary" type="button" id="workspace-inprogress-link-btn">링크 열기</button>
+      <button class="btn btn-primary" type="button" id="workspace-inprogress-detail-btn">상세페이지 가기</button>
     </div>
   </div>
 </div>
@@ -6102,7 +6228,7 @@ function renderKanban(){
           : ''));
     const cardClick = isDoneTask
       ? `openWorkspaceDoneTaskModal(${JSON.stringify(t.id)})`
-      : (isTodoTask ? `openWorkspaceTodoTaskModal(${JSON.stringify(t.id)})` : `openWorkspaceTaskPage(${JSON.stringify(t.id)})`);
+      : (isTodoTask ? `openWorkspaceTodoTaskModal(${JSON.stringify(t.id)})` : `openWorkspaceInprogressTaskModal(${JSON.stringify(t.id)})`);
     const fallbackLabel = catLabel[t.category] || t.category || '포스터';
     const posterFallback = `<div class="task-card-poster-fallback" aria-hidden="true">`
       + `<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="8" width="36" height="32" rx="3"/><circle cx="17" cy="20" r="3"/><path d="M42 30L31 22 14 38"/></svg>`
@@ -7624,6 +7750,37 @@ function openWorkspaceTaskPage(id){
   navigate('workspace-task-detail', { keepTaskHash:true });
 }
 
+// 진행 중 작업 카드 클릭 → URL 이미지 미리보기 모달. '상세페이지 가기'로 상세 페이지 이동.
+function openWorkspaceInprogressTaskModal(id){
+  const task = tasks.find(item => String(item.id) === String(id));
+  if(!task) return;
+  selectedWorkspaceTaskId = task.id;
+  document.getElementById('workspace-inprogress-task-id').value = String(task.id);
+  document.getElementById('workspace-inprogress-modal-title').textContent = task.title || '진행 중 작업';
+  document.getElementById('workspace-inprogress-modal-note').textContent = `${task.assignee || '미지정'} 담당 · ${task.scheduledDate || '-'}`;
+  const wrap = document.getElementById('workspace-inprogress-image-wrap');
+  wrap.innerHTML = task.imageUrl
+    ? `<img class="ws-ip-image" src="${escapeAttr(task.imageUrl)}" alt="${escapeAttr(task.title || '미리보기')}" onerror="workspaceInprogressImageError(this)">`
+    : `<div class="ws-ip-empty">등록된 이미지 URL이 없습니다</div>`;
+  const linkBtn = document.getElementById('workspace-inprogress-link-btn');
+  if(task.link){
+    linkBtn.style.display = '';
+    linkBtn.onclick = () => openWorkspaceLink(task.link);
+  } else {
+    linkBtn.style.display = 'none';
+  }
+  document.getElementById('workspace-inprogress-detail-btn').onclick = () => {
+    closeModal('workspace-inprogress-modal');
+    openWorkspaceTaskPage(task.id);
+  };
+  openModal('workspace-inprogress-modal');
+}
+
+function workspaceInprogressImageError(img){
+  const wrap = img.parentElement;
+  if(wrap) wrap.innerHTML = '<div class="ws-ip-empty">이미지를 불러올 수 없습니다</div>';
+}
+
 function renderWorkspaceResourceRow(resource = {}){
   const normalized = {
     id: String(resource.id || `resource-${Date.now()}`),
@@ -7700,6 +7857,15 @@ function workspaceStatusLabel(status){
 
 function workspaceCategoryLabel(category){
   return { research:'연구', paper:'논문', hw:'하드웨어', sw:'소프트웨어', contest:'공모전', admin:'행정' }[String(category || 'research')] || String(category || '기타');
+}
+function workspaceStatusBadgeClass(status){
+  return { todo:'badge-gray', inprogress:'badge-blue', done:'badge-green' }[String(status || 'todo')] || 'badge-gray';
+}
+function workspaceCategoryColor(category){
+  return {
+    research:'var(--accent)', paper:'var(--finder-blue)', hw:'var(--finder-orange)',
+    sw:'var(--finder-green)', contest:'var(--finder-red)', admin:'var(--finder-gray)'
+  }[String(category || 'research')] || 'var(--accent)';
 }
 function formatWon(value){
   const amount = normalizePrizeAmount(value);
@@ -7870,13 +8036,15 @@ function renderWorkspaceTaskPage(){
       <input type="hidden" id="workspace-page-schedule-color" value="${escapeAttr(task.scheduleColor || '')}">
       <input type="hidden" id="workspace-page-extra-schedules-data" value="${escapeAttr(JSON.stringify(normalizeExtraSchedules(task.extraSchedules || [])))}">
 
-      <!-- ① 헤더 바 — 제목 + 상태/카테고리 셀렉트 + 액션 버튼 -->
-      <div class="ws-header-card">
-        <input class="ws-header-title-input" id="workspace-page-title-input" value="${escapeAttr(task.title || '')}" placeholder="태스크 제목">
-        <div class="ws-summary-chip-row">
-          <span class="badge badge-gray">${escapeHtml(workspaceStatusLabel(task.status))}</span>
-          <span class="badge badge-gray">${escapeHtml(workspaceCategoryLabel(task.category))}</span>
-          <span class="badge badge-gray">${escapeHtml(task.scheduledDate || '-')}</span>
+      <!-- ① 헤더 — 카테고리 색 강조바 + 제목 + 상태 칩 + 액션 -->
+      <div class="ws-header-card" style="--ws-accent:${workspaceCategoryColor(task.category)}">
+        <div class="ws-header-main">
+          <input class="ws-header-title-input" id="workspace-page-title-input" value="${escapeAttr(task.title || '')}" placeholder="태스크 제목">
+          <div class="ws-summary-chip-row">
+            <span class="badge ${workspaceStatusBadgeClass(task.status)}">${escapeHtml(workspaceStatusLabel(task.status))}</span>
+            <span class="badge badge-gray">${escapeHtml(workspaceCategoryLabel(task.category))}</span>
+            <span class="badge badge-gray">${escapeHtml(task.scheduledDate || '-')}</span>
+          </div>
         </div>
         <div class="ws-header-actions">
           <button class="btn btn-secondary btn-sm" type="button" id="workspace-page-link-open-btn" onclick="openWorkspaceLink(document.getElementById('workspace-page-link')?.value || '')">링크 열기</button>
@@ -7924,34 +8092,28 @@ function renderWorkspaceTaskPage(){
 
         </div>
 
-        <!-- 오른쪽: 기본 정보 + 참여자 -->
+        <!-- 오른쪽: 정보 레일 (sticky) -->
         <div class="ws-right">
-          <div class="ws-manage-actions">
-            <button class="btn btn-secondary btn-sm" type="button" id="workspace-page-basic-manage-btn" onclick="openWorkspaceManageModal('basic')">기본정보 정리</button>
-            <button class="btn btn-secondary btn-sm" type="button" id="workspace-page-participants-manage-btn" onclick="openWorkspaceManageModal('participants')">참여자 정리</button>
-            ${currentSpace === 'hub' ? `<button class="btn btn-secondary btn-sm" type="button" id="workspace-page-schedule-manage-btn" onclick="openWorkspaceManageModal('schedule')">일정 공유 정리</button>` : ''}
-          </div>
-
           <div class="ws-summary-card">
             <div class="ws-summary-head">
               <div class="ws-summary-title">기본정보</div>
-              <button class="btn btn-secondary btn-sm" type="button" onclick="openWorkspaceManageModal('basic')">관리</button>
+              <button class="btn btn-secondary btn-sm" type="button" id="workspace-page-basic-manage-btn" onclick="openWorkspaceManageModal('basic')">관리</button>
             </div>
-            <div class="ws-summary-meta">
-              <div>담당자: <strong>${escapeHtml(task.assignee || '미지정')}</strong></div>
-              <div>상태: <strong>${escapeHtml(workspaceStatusLabel(task.status))}</strong></div>
-              <div>카테고리: <strong>${escapeHtml(workspaceCategoryLabel(task.category))}</strong></div>
-              <div>날짜: <strong>${escapeHtml(task.scheduledDate || '-')}</strong></div>
-              <div>참가 제한: <strong>${escapeHtml(participantLimitText(task.participantLimit))}</strong></div>
-              <div>공유 링크: <strong>${escapeHtml(task.link || '미등록')}</strong></div>
-              <div>공유 링크 수: <strong>${escapeHtml(String(resources.length))}</strong></div>
+            <div class="ws-kv-list">
+              <div class="ws-kv"><span>담당자</span><strong>${escapeHtml(task.assignee || '미지정')}</strong></div>
+              <div class="ws-kv"><span>상태</span><strong>${escapeHtml(workspaceStatusLabel(task.status))}</strong></div>
+              <div class="ws-kv"><span>카테고리</span><strong>${escapeHtml(workspaceCategoryLabel(task.category))}</strong></div>
+              <div class="ws-kv"><span>날짜</span><strong>${escapeHtml(task.scheduledDate || '-')}</strong></div>
+              <div class="ws-kv"><span>참가 제한</span><strong>${escapeHtml(participantLimitText(task.participantLimit))}</strong></div>
+              <div class="ws-kv"><span>공유 링크</span><strong>${escapeHtml(task.link || '미등록')}</strong></div>
+              <div class="ws-kv"><span>공유 링크 수</span><strong>${escapeHtml(String(resources.length))}</strong></div>
             </div>
           </div>
 
           <div class="ws-summary-card">
             <div class="ws-summary-head">
               <div class="ws-summary-title">참여자</div>
-              <button class="btn btn-secondary btn-sm" type="button" onclick="openWorkspaceManageModal('participants')">관리</button>
+              <button class="btn btn-secondary btn-sm" type="button" id="workspace-page-participants-manage-btn" onclick="openWorkspaceManageModal('participants')">관리</button>
             </div>
             <div class="ws-summary-meta">
               <div>현재 ${participants.length}명${task.participantLimit ? ` / 최대 ${task.participantLimit}명` : ''}</div>
@@ -7965,7 +8127,7 @@ function renderWorkspaceTaskPage(){
           <div class="ws-summary-card">
             <div class="ws-summary-head">
               <div class="ws-summary-title">일정 공유 표시</div>
-              <button class="btn btn-secondary btn-sm" type="button" onclick="openWorkspaceManageModal('schedule')">관리</button>
+              <button class="btn btn-secondary btn-sm" type="button" id="workspace-page-schedule-manage-btn" onclick="openWorkspaceManageModal('schedule')">관리</button>
             </div>
             <div class="ws-summary-meta">
               <div>메인 색상: <strong>${escapeHtml(workspaceScheduleColorLabel(task.scheduleColor))}</strong></div>
