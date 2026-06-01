@@ -353,19 +353,35 @@
   .lab-name { font-weight: 600; font-size: 15px; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 140px; }
   .lab-sub { font-size: 11px; color: var(--text3); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 140px; }
   .sidebar-section { padding: 12px 8px 4px; }
-  .sidebar-section-label { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; padding: 0 8px; margin-bottom: 4px; }
+  .sidebar-section-label { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; padding: 0 8px; margin-bottom: 6px; }
   .nav-item {
-    display: flex; align-items: center; gap: 9px;
-    padding: 7px 10px; border-radius: var(--radius);
+    position: relative;
+    display: flex; align-items: center; gap: 10px;
+    padding: 6px 10px; border-radius: 11px;
     cursor: pointer; color: var(--text2); font-size: 13.5px;
-    transition: background 0.15s, color 0.15s;
+    transition: background .16s, color .16s, transform .16s;
     user-select: none;
     min-width: 0;
   }
   .nav-item > span:not(.nav-badge) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .nav-item:hover { background: var(--bg3); color: var(--text); }
-  .nav-item.active { background: var(--accent-bg); color: var(--accent); font-weight: 500; }
-  .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+  /* 아이콘을 둥근 칩 안에 담는다 — svg(16뷰박스)에 패딩을 줘 26px 칩으로 보이게 */
+  .nav-item > svg {
+    width: 27px; height: 27px; padding: 6px; box-sizing: border-box;
+    border-radius: 9px; flex-shrink: 0;
+    background: var(--bg3); color: var(--text3);
+    transition: background .16s, color .16s;
+  }
+  .nav-item:hover { background: var(--bg3); color: var(--text); transform: translateX(2px); }
+  .nav-item:hover > svg { color: var(--text); }
+  .nav-item.active { background: var(--accent-bg); color: var(--accent); font-weight: 600; }
+  .nav-item.active > svg { background: color-mix(in srgb, var(--accent) 20%, transparent); color: var(--accent); }
+  /* 활성 항목 좌측 강조바 */
+  .nav-item.active::before {
+    content: ''; position: absolute; left: -8px; top: 50%;
+    transform: translateY(-50%);
+    width: 3px; height: 20px; border-radius: 0 3px 3px 0;
+    background: var(--accent);
+  }
   .nav-badge {
     margin-left: auto; background: var(--accent); color: white;
     font-size: 10px; font-weight: 600; border-radius: 10px;
@@ -474,6 +490,52 @@
     border-color: color-mix(in srgb, var(--accent) 32%, var(--border));
   }
   .dash-hello-card:hover { transform: none; box-shadow: none; }
+
+  /* 리소스(AI/DATA) 페이지 — 섹션별 색은 .res-section 의 --rc 로 상속 */
+  .res-section { margin-bottom: 26px; }
+  .res-section:last-child { margin-bottom: 0; }
+  .res-section-head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .res-section-icon {
+    width: 38px; height: 38px; flex-shrink: 0;
+    display: grid; place-items: center; border-radius: 11px;
+    color: var(--rc, var(--accent));
+    background: color-mix(in srgb, var(--rc, var(--accent)) 15%, transparent);
+    border: 1px solid color-mix(in srgb, var(--rc, var(--accent)) 30%, transparent);
+  }
+  .res-section-icon svg { width: 19px; height: 19px; }
+  .res-section-title { font-size: 15px; font-weight: 700; color: var(--text); letter-spacing: -.01em; }
+  .res-section-desc { font-size: 12px; color: var(--text3); margin-top: 2px; }
+  .res-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+  .res-link {
+    position: relative; display: block; text-decoration: none;
+    padding: 14px 36px 14px 15px; border-radius: 14px;
+    background: var(--bg2); border: 1px solid var(--border);
+    overflow: hidden;
+    transition: transform .18s cubic-bezier(.22, 1, .36, 1), box-shadow .18s ease, border-color .18s ease;
+  }
+  .res-link::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+    background: var(--rc, var(--accent)); opacity: 0; transition: opacity .18s;
+  }
+  .res-link:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 34px -22px rgba(0, 0, 0, .55);
+    border-color: color-mix(in srgb, var(--rc, var(--accent)) 45%, var(--border));
+  }
+  .res-link:hover::before { opacity: 1; }
+  .res-link-name { font-size: 14px; font-weight: 700; color: var(--text); }
+  .res-link-desc { font-size: 12px; color: var(--text3); margin-top: 5px; line-height: 1.5; }
+  .res-link-arrow {
+    position: absolute; top: 14px; right: 13px; width: 14px; height: 14px;
+    color: var(--text3); opacity: 0; transform: translate(-2px, 2px);
+    transition: opacity .18s, transform .18s, color .18s;
+  }
+  .res-link:hover .res-link-arrow { opacity: 1; transform: none; color: var(--rc, var(--accent)); }
+  @media (prefers-reduced-motion: reduce) {
+    .res-link { transition: none; }
+    .res-link:hover { transform: none; }
+    .res-link-arrow { transition: none; }
+  }
   .card-title { font-size: 13px; font-weight: 500; color: var(--text2); margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
   .card-title svg { width: 14px; height: 14px; }
 
@@ -1961,7 +2023,7 @@
       border-color: rgba(95,194,204,.36);
       background: var(--accent-bg);
     }
-    .nav-item svg { width: 15px; height: 15px; }
+    .nav-item > svg { width: 25px; height: 25px; padding: 5px; }
     .page { padding: 16px 12px 96px; gap: 16px; }
     .page-header {
       flex-direction: column;
@@ -2607,6 +2669,18 @@
       </div>
     </div>
 
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">리소스</div>
+      <div class="nav-item" onclick="navigate('ai')">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M7.657 6.247c.11-.33.576-.33.686 0l.645 1.937a2.89 2.89 0 0 0 1.829 1.828l1.936.645c.33.11.33.576 0 .686l-1.937.645a2.89 2.89 0 0 0-1.828 1.829l-.645 1.936a.361.361 0 0 1-.686 0l-.645-1.937a2.89 2.89 0 0 0-1.828-1.828l-1.937-.645a.361.361 0 0 1 0-.686l1.937-.645a2.89 2.89 0 0 0 1.828-1.828l.645-1.937zM3.794 1.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387A1.734 1.734 0 0 0 4.593 5.69l-.387 1.162a.217.217 0 0 1-.412 0L3.407 5.69A1.734 1.734 0 0 0 2.31 4.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387A1.734 1.734 0 0 0 3.407 2.31l.387-1.162zM10.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732L9.1 2.141a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732L10.863.1z"/></svg>
+        AI 도구
+      </div>
+      <div class="nav-item" onclick="navigate('data')">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M4.318 2.687C5.234 2.271 6.536 2 8 2s2.766.27 3.682.687C12.644 3.125 13 3.627 13 4c0 .374-.356.875-1.318 1.313C10.766 5.729 9.464 6 8 6s-2.766-.27-3.682-.687C3.356 4.875 3 4.373 3 4c0-.374.356-.875 1.318-1.313ZM13 5.698V7c0 .374-.356.875-1.318 1.313C10.766 8.729 9.464 9 8 9s-2.766-.27-3.682-.687C3.356 7.875 3 7.373 3 7V5.698c.271.202.58.378.904.525C4.978 6.711 6.427 7 8 7s3.022-.289 4.096-.777A4.92 4.92 0 0 0 13 5.698ZM14 4c0-1.007-.875-1.755-1.904-2.223C11.022 1.289 9.573 1 8 1s-3.022.289-4.096.777C2.875 2.245 2 2.993 2 4v9c0 1.007.875 1.755 1.904 2.223C4.978 15.71 6.427 16 8 16s3.022-.289 4.096-.777C13.125 14.755 14 14.007 14 13V4Zm-1 4.698V10c0 .374-.356.875-1.318 1.313C10.766 11.729 9.464 12 8 12s-2.766-.27-3.682-.687C3.356 10.875 3 10.373 3 10V8.698c.271.202.58.378.904.525C4.978 9.711 6.427 10 8 10s3.022-.289 4.096-.777A4.92 4.92 0 0 0 13 8.698ZM13 11.698V13c0 .374-.356.875-1.318 1.313C10.766 14.729 9.464 15 8 15s-2.766-.27-3.682-.687C3.356 13.875 3 13.373 3 13v-1.302c.271.202.58.378.904.525C4.978 12.711 6.427 13 8 13s3.022-.289 4.096-.777A4.92 4.92 0 0 0 13 11.698Z"/></svg>
+        DATA 셋
+      </div>
+    </div>
+
     <div class="sidebar-footer">
       <div class="user-me">
         <div class="avatar av-blue" style="width:28px;height:28px;font-size:11px;" id="current-user-avatar">나</div>
@@ -2666,6 +2740,14 @@
     <button class="mobile-nav-link" type="button" data-page="personal" onclick="navigate('personal')">
       <svg viewBox="0 0 16 16" fill="currentColor"><path d="M14 1H2a1 1 0 00-1 1v12l3-2h10a1 1 0 001-1V2a1 1 0 00-1-1zM4 4h8v1H4V4zm0 2.5h8v1H4v-1zM4 9h5v1H4V9z"/></svg>
       <span>개인 페이지</span>
+    </button>
+    <button class="mobile-nav-link" type="button" data-page="ai" onclick="navigate('ai')">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M7.657 6.247c.11-.33.576-.33.686 0l.645 1.937a2.89 2.89 0 0 0 1.829 1.828l1.936.645c.33.11.33.576 0 .686l-1.937.645a2.89 2.89 0 0 0-1.828 1.829l-.645 1.936a.361.361 0 0 1-.686 0l-.645-1.937a2.89 2.89 0 0 0-1.828-1.828l-1.937-.645a.361.361 0 0 1 0-.686l1.937-.645a2.89 2.89 0 0 0 1.828-1.828l.645-1.937zM3.794 1.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387A1.734 1.734 0 0 0 4.593 5.69l-.387 1.162a.217.217 0 0 1-.412 0L3.407 5.69A1.734 1.734 0 0 0 2.31 4.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387A1.734 1.734 0 0 0 3.407 2.31l.387-1.162z"/></svg>
+      <span>AI 도구</span>
+    </button>
+    <button class="mobile-nav-link" type="button" data-page="data" onclick="navigate('data')">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M4.318 2.687C5.234 2.271 6.536 2 8 2s2.766.27 3.682.687C12.644 3.125 13 3.627 13 4c0 .374-.356.875-1.318 1.313C10.766 5.729 9.464 6 8 6s-2.766-.27-3.682-.687C3.356 4.875 3 4.373 3 4c0-.374.356-.875 1.318-1.313ZM13 5.698V7c0 .374-.356.875-1.318 1.313C10.766 8.729 9.464 9 8 9s-2.766-.27-3.682-.687C3.356 7.875 3 7.373 3 7V5.698c.271.202.58.378.904.525C4.978 6.711 6.427 7 8 7s3.022-.289 4.096-.777A4.92 4.92 0 0 0 13 5.698ZM14 4c0-1.007-.875-1.755-1.904-2.223C11.022 1.289 9.573 1 8 1s-3.022.289-4.096.777C2.875 2.245 2 2.993 2 4v9c0 1.007.875 1.755 1.904 2.223C4.978 15.71 6.427 16 8 16s3.022-.289 4.096-.777C13.125 14.755 14 14.007 14 13V4Z"/></svg>
+      <span>DATA 셋</span>
     </button>
   </div>
 
@@ -3022,6 +3104,277 @@
               <div class="study-session-list" id="study-session-list"></div>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== AI 도구 ===== -->
+    <div class="page" id="page-ai">
+      <div class="page-header">
+        <div>
+          <div class="page-title">AI 도구 모음</div>
+          <div class="page-sub">기능별로 강점이 있는 AI를 정리했어요. 카드를 누르면 새 탭으로 해당 서비스가 열립니다.</div>
+        </div>
+      </div>
+
+      <div class="res-section" style="--rc:#5fc2cc">
+        <div class="res-section-head">
+          <span class="res-section-icon"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h2v2.5L7.5 12H14a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1H2zm3 4.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg></span>
+          <div>
+            <div class="res-section-title">대화 · 범용</div>
+            <div class="res-section-desc">물어보고 추론하고 정리하는 만능 어시스턴트</div>
+          </div>
+        </div>
+        <div class="res-grid">
+          <a class="res-link" href="https://chatgpt.com" target="_blank" rel="noopener noreferrer"><div class="res-link-name">ChatGPT</div><div class="res-link-desc">범용 대화·추론의 대표 주자</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://claude.ai" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Claude</div><div class="res-link-desc">긴 문서 이해와 코딩에 강함</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://gemini.google.com" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Gemini</div><div class="res-link-desc">구글 생태계 연동 멀티모달</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://www.perplexity.ai" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Perplexity</div><div class="res-link-desc">출처를 달아주는 검색형 답변</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://grok.com" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Grok</div><div class="res-link-desc">실시간 X 데이터를 반영</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+        </div>
+      </div>
+
+      <div class="res-section" style="--rc:#64d2ff">
+        <div class="res-section-head">
+          <span class="res-section-icon"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M5.854 4.854a.5.5 0 1 0-.708-.708l-3.5 3.5a.5.5 0 0 0 0 .708l3.5 3.5a.5.5 0 0 0 .708-.708L2.707 8l3.147-3.146zm4.292 0a.5.5 0 0 1 .708-.708l3.5 3.5a.5.5 0 0 1 0 .708l-3.5 3.5a.5.5 0 0 1-.708-.708L13.293 8l-3.147-3.146z"/></svg></span>
+          <div>
+            <div class="res-section-title">코딩 · 개발</div>
+            <div class="res-section-desc">코드를 짜고 고치고 자동완성하는 도구</div>
+          </div>
+        </div>
+        <div class="res-grid">
+          <a class="res-link" href="https://github.com/features/copilot" target="_blank" rel="noopener noreferrer"><div class="res-link-name">GitHub Copilot</div><div class="res-link-desc">에디터 안 코드 자동완성</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://cursor.com" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Cursor</div><div class="res-link-desc">AI 네이티브 코드 에디터</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://www.claude.com/product/claude-code" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Claude Code</div><div class="res-link-desc">터미널 기반 에이전트 코딩</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://windsurf.com" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Windsurf</div><div class="res-link-desc">에이전트형 통합 IDE</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://v0.dev" target="_blank" rel="noopener noreferrer"><div class="res-link-name">v0</div><div class="res-link-desc">프롬프트로 UI 코드 생성</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+        </div>
+      </div>
+
+      <div class="res-section" style="--rc:#bf5af2">
+        <div class="res-section-head">
+          <span class="res-section-icon"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1H2zm0 1h12v6.5l-3-3L7 11.5 5 9.5 2 12.5V3zm3 1.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3z"/></svg></span>
+          <div>
+            <div class="res-section-title">이미지 생성</div>
+            <div class="res-section-desc">텍스트로 그림·일러스트·디자인을 생성</div>
+          </div>
+        </div>
+        <div class="res-grid">
+          <a class="res-link" href="https://www.midjourney.com" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Midjourney</div><div class="res-link-desc">예술적 퀄리티의 이미지 생성</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://stability.ai" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Stable Diffusion</div><div class="res-link-desc">오픈소스 이미지 생성 모델</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://firefly.adobe.com" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Adobe Firefly</div><div class="res-link-desc">상업적으로 안전한 생성·편집</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://ideogram.ai" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Ideogram</div><div class="res-link-desc">글자가 정확히 들어가는 이미지</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://leonardo.ai" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Leonardo AI</div><div class="res-link-desc">게임·디자인 에셋 특화</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+        </div>
+      </div>
+
+      <div class="res-section" style="--rc:#ffb35f">
+        <div class="res-section-head">
+          <span class="res-section-icon"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M0 4a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm14.5-.5a.5.5 0 0 0-.79-.41L12 4.34v7.32l1.71 1.25a.5.5 0 0 0 .79-.41v-9z"/></svg></span>
+          <div>
+            <div class="res-section-title">영상 생성</div>
+            <div class="res-section-desc">텍스트·이미지로 짧은 영상을 만드는 도구</div>
+          </div>
+        </div>
+        <div class="res-grid">
+          <a class="res-link" href="https://runwayml.com" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Runway</div><div class="res-link-desc">영상 생성·편집 종합 도구</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://sora.com" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Sora</div><div class="res-link-desc">OpenAI 텍스트→영상</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://pika.art" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Pika</div><div class="res-link-desc">간편한 영상 생성</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://klingai.com" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Kling</div><div class="res-link-desc">고품질 사실적 영상 생성</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://lumalabs.ai/dream-machine" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Luma Dream Machine</div><div class="res-link-desc">부드러운 모션의 영상</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+        </div>
+      </div>
+
+      <div class="res-section" style="--rc:#ff6b9d">
+        <div class="res-section-head">
+          <span class="res-section-icon"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a3 3 0 0 0-3 3v4a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M3.5 7a.5.5 0 0 1 .5.5V8a4 4 0 0 0 8 0v-.5a.5.5 0 0 1 1 0V8a5 5 0 0 1-4.5 4.975V15h2a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1h2v-2.025A5 5 0 0 1 3 8v-.5a.5.5 0 0 1 .5-.5z"/></svg></span>
+          <div>
+            <div class="res-section-title">음성 · 음악</div>
+            <div class="res-section-desc">목소리·노래·더빙을 생성하는 도구</div>
+          </div>
+        </div>
+        <div class="res-grid">
+          <a class="res-link" href="https://elevenlabs.io" target="_blank" rel="noopener noreferrer"><div class="res-link-name">ElevenLabs</div><div class="res-link-desc">자연스러운 음성 합성·더빙</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://suno.com" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Suno</div><div class="res-link-desc">가사로 노래를 생성</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://www.udio.com" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Udio</div><div class="res-link-desc">고품질 음악 생성</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://www.heygen.com" target="_blank" rel="noopener noreferrer"><div class="res-link-name">HeyGen</div><div class="res-link-desc">AI 아바타 영상·더빙</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+        </div>
+      </div>
+
+      <div class="res-section" style="--rc:#7d8cff">
+        <div class="res-section-head">
+          <span class="res-section-icon"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811V2.828zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492V2.687z"/></svg></span>
+          <div>
+            <div class="res-section-title">연구 · 논문</div>
+            <div class="res-section-desc">논문을 찾고 읽고 근거를 정리하는 도구</div>
+          </div>
+        </div>
+        <div class="res-grid">
+          <a class="res-link" href="https://elicit.com" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Elicit</div><div class="res-link-desc">논문 검색·요약 자동화</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://consensus.app" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Consensus</div><div class="res-link-desc">논문 근거 기반 답변</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://scispace.com" target="_blank" rel="noopener noreferrer"><div class="res-link-name">SciSpace</div><div class="res-link-desc">논문 읽기·설명 도우미</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://www.semanticscholar.org" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Semantic Scholar</div><div class="res-link-desc">AI 논문 검색 엔진</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://www.connectedpapers.com" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Connected Papers</div><div class="res-link-desc">논문 관계 그래프 탐색</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+        </div>
+      </div>
+
+      <div class="res-section" style="--rc:#30d158">
+        <div class="res-section-head">
+          <span class="res-section-icon"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zM4.5 5a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zm0 2a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zm0 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1h-3z"/></svg></span>
+          <div>
+            <div class="res-section-title">생산성 · 문서</div>
+            <div class="res-section-desc">정리·발표·회의 기록을 돕는 도구</div>
+          </div>
+        </div>
+        <div class="res-grid">
+          <a class="res-link" href="https://notebooklm.google.com" target="_blank" rel="noopener noreferrer"><div class="res-link-name">NotebookLM</div><div class="res-link-desc">내 자료 기반 요약·오디오</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://www.notion.so/product/ai" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Notion AI</div><div class="res-link-desc">노트·문서 작성 보조</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://gamma.app" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Gamma</div><div class="res-link-desc">프롬프트로 발표자료 생성</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://www.napkin.ai" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Napkin</div><div class="res-link-desc">글을 다이어그램으로</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://otter.ai" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Otter.ai</div><div class="res-link-desc">회의 자동 기록·요약</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== DATA 셋 ===== -->
+    <div class="page" id="page-data">
+      <div class="page-header">
+        <div>
+          <div class="page-title">데이터셋 모음</div>
+          <div class="page-sub">국내·해외, 분야별로 데이터셋을 찾을 수 있는 사이트예요. 카드를 누르면 새 탭으로 접속합니다.</div>
+        </div>
+      </div>
+
+      <div class="res-section" style="--rc:#5fc2cc">
+        <div class="res-section-head">
+          <span class="res-section-icon"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a5 5 0 0 0-5 5c0 5 5 11 5 11s5-6 5-11a5 5 0 0 0-5-5zm0 7a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg></span>
+          <div>
+            <div class="res-section-title">국내 (한국)</div>
+            <div class="res-section-desc">정부·공공·통계 기반 한국 데이터</div>
+          </div>
+        </div>
+        <div class="res-grid">
+          <a class="res-link" href="https://www.data.go.kr" target="_blank" rel="noopener noreferrer"><div class="res-link-name">공공데이터포털</div><div class="res-link-desc">정부·공공기관 개방 데이터</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://aihub.or.kr" target="_blank" rel="noopener noreferrer"><div class="res-link-name">AI Hub</div><div class="res-link-desc">AI 학습용 대규모 데이터셋</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://kosis.kr" target="_blank" rel="noopener noreferrer"><div class="res-link-name">KOSIS 국가통계포털</div><div class="res-link-desc">국가 통계 종합 포털</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://data.seoul.go.kr" target="_blank" rel="noopener noreferrer"><div class="res-link-name">서울 열린데이터광장</div><div class="res-link-desc">서울시 도시 데이터</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://data.kma.go.kr" target="_blank" rel="noopener noreferrer"><div class="res-link-name">기상자료개방포털</div><div class="res-link-desc">기상청 날씨·기후 데이터</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://dacon.io" target="_blank" rel="noopener noreferrer"><div class="res-link-name">DACON</div><div class="res-link-desc">국내 데이터 경진대회·데이터</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+        </div>
+      </div>
+
+      <div class="res-section" style="--rc:#64d2ff">
+        <div class="res-section-head">
+          <span class="res-section-icon"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zM4.5 7.5a3.5 3.5 0 0 1 7 0 3.5 3.5 0 0 1-7 0zM2 8a6 6 0 0 1 1.03-3.36A4.5 4.5 0 0 0 8 13.45 6 6 0 0 1 2 8z"/></svg></span>
+          <div>
+            <div class="res-section-title">해외 종합 · 머신러닝</div>
+            <div class="res-section-desc">ML/AI 학습 데이터의 대표 허브</div>
+          </div>
+        </div>
+        <div class="res-grid">
+          <a class="res-link" href="https://www.kaggle.com/datasets" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Kaggle Datasets</div><div class="res-link-desc">가장 큰 데이터·대회 허브</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://huggingface.co/datasets" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Hugging Face Datasets</div><div class="res-link-desc">ML/NLP 데이터의 표준</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://datasetsearch.research.google.com" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Google Dataset Search</div><div class="res-link-desc">데이터셋 전용 검색 엔진</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://archive.ics.uci.edu" target="_blank" rel="noopener noreferrer"><div class="res-link-name">UCI ML Repository</div><div class="res-link-desc">고전 머신러닝 데이터</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://paperswithcode.com/datasets" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Papers with Code</div><div class="res-link-desc">논문·SOTA 연계 데이터</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://github.com/awesomedata/awesome-public-datasets" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Awesome Public Datasets</div><div class="res-link-desc">공개 데이터 큐레이션 목록</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+        </div>
+      </div>
+
+      <div class="res-section" style="--rc:#30d158">
+        <div class="res-section-head">
+          <span class="res-section-icon"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 11a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-3zm5-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7zm5-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V2z"/></svg></span>
+          <div>
+            <div class="res-section-title">공공 · 통계 (해외)</div>
+            <div class="res-section-desc">정부·국제기구 공개 데이터·지표</div>
+          </div>
+        </div>
+        <div class="res-grid">
+          <a class="res-link" href="https://data.gov" target="_blank" rel="noopener noreferrer"><div class="res-link-name">data.gov</div><div class="res-link-desc">미국 정부 공개 데이터</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://data.europa.eu" target="_blank" rel="noopener noreferrer"><div class="res-link-name">EU Open Data</div><div class="res-link-desc">유럽연합 공개 데이터</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://data.worldbank.org" target="_blank" rel="noopener noreferrer"><div class="res-link-name">World Bank Open Data</div><div class="res-link-desc">세계 경제·개발 지표</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://ourworldindata.org" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Our World in Data</div><div class="res-link-desc">시각화된 글로벌 통계</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://data.un.org" target="_blank" rel="noopener noreferrer"><div class="res-link-name">UN Data</div><div class="res-link-desc">유엔 통계 데이터</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+        </div>
+      </div>
+
+      <div class="res-section" style="--rc:#bf5af2">
+        <div class="res-section-head">
+          <span class="res-section-icon"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1H2zm0 1h12v6.5l-3-3L7 11.5 5 9.5 2 12.5V3zm3 1.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3z"/></svg></span>
+          <div>
+            <div class="res-section-title">비전 (이미지 · 영상)</div>
+            <div class="res-section-desc">컴퓨터비전 학습용 이미지 데이터</div>
+          </div>
+        </div>
+        <div class="res-grid">
+          <a class="res-link" href="https://www.image-net.org" target="_blank" rel="noopener noreferrer"><div class="res-link-name">ImageNet</div><div class="res-link-desc">이미지 분류의 표준 데이터</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://cocodataset.org" target="_blank" rel="noopener noreferrer"><div class="res-link-name">COCO</div><div class="res-link-desc">객체 검출·세그멘테이션</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://storage.googleapis.com/openimages/web/index.html" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Open Images</div><div class="res-link-desc">대규모 라벨 이미지</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://universe.roboflow.com" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Roboflow Universe</div><div class="res-link-desc">컴퓨터비전 데이터 공유</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+        </div>
+      </div>
+
+      <div class="res-section" style="--rc:#7d8cff">
+        <div class="res-section-head">
+          <span class="res-section-icon"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H5l-3 3V2zm2.5 2a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7zm0 2.5a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7zm0 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1h-4z"/></svg></span>
+          <div>
+            <div class="res-section-title">자연어 (NLP · 텍스트)</div>
+            <div class="res-section-desc">언어모델·NLP 학습용 텍스트 코퍼스</div>
+          </div>
+        </div>
+        <div class="res-grid">
+          <a class="res-link" href="https://commoncrawl.org" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Common Crawl</div><div class="res-link-desc">웹 전체 크롤 코퍼스</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://dumps.wikimedia.org" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Wikipedia Dumps</div><div class="res-link-desc">위키 전체 텍스트 덤프</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://gluebenchmark.com" target="_blank" rel="noopener noreferrer"><div class="res-link-name">GLUE Benchmark</div><div class="res-link-desc">NLP 평가 표준 데이터</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://rajpurkar.github.io/SQuAD-explorer/" target="_blank" rel="noopener noreferrer"><div class="res-link-name">SQuAD</div><div class="res-link-desc">질의응답(QA) 데이터</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+        </div>
+      </div>
+
+      <div class="res-section" style="--rc:#ff6b9d">
+        <div class="res-section-head">
+          <span class="res-section-icon"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/></svg></span>
+          <div>
+            <div class="res-section-title">의료 · 바이오</div>
+            <div class="res-section-desc">임상·생의학·유전체 데이터</div>
+          </div>
+        </div>
+        <div class="res-grid">
+          <a class="res-link" href="https://physionet.org" target="_blank" rel="noopener noreferrer"><div class="res-link-name">PhysioNet</div><div class="res-link-desc">의료 신호·임상 데이터</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://www.ncbi.nlm.nih.gov" target="_blank" rel="noopener noreferrer"><div class="res-link-name">NCBI (NIH)</div><div class="res-link-desc">유전체·생의학 데이터</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://www.cancerimagingarchive.net" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Cancer Imaging Archive</div><div class="res-link-desc">암 의료영상 데이터</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://mimic.mit.edu" target="_blank" rel="noopener noreferrer"><div class="res-link-name">MIMIC</div><div class="res-link-desc">중환자실 임상 데이터</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+        </div>
+      </div>
+
+      <div class="res-section" style="--rc:#ffb35f">
+        <div class="res-section-head">
+          <span class="res-section-icon"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zM1.05 8.5h2.43c.05 1.36.28 2.6.63 3.6A6.5 6.5 0 0 1 1.05 8.5zm0-1A6.5 6.5 0 0 1 4.1 3.9c-.35 1-.58 2.24-.63 3.6H1.05zm6.45-6.43c.6.36 1.2 1.36 1.6 2.93H7.5V1.07zm0 3.93H8.9c.16.78.26 1.63.3 2.5H7.5V5zm0 3.5h1.7a11.5 11.5 0 0 1-.3 2.5H7.5v-2.5zm0 3.5h1.6c-.4 1.57-1 2.57-1.6 2.93V12zm-1 2.93c-.6-.36-1.2-1.36-1.6-2.93H6.5v2.93zM6.5 11H4.8a11.5 11.5 0 0 1-.3-2.5h2v2.5zm0-3.5h-2c.04-.87.14-1.72.3-2.5H6.5V7.5zm0-3.5H4.9c.4-1.57 1-2.57 1.6-2.93V4zm5.4-.1a6.5 6.5 0 0 1 3.05 3.6h-2.43c-.05-1.36-.28-2.6-.63-3.6zm3.05 4.6a6.5 6.5 0 0 1-3.05 3.6c.35-1 .58-2.24.63-3.6h2.42z"/></svg></span>
+          <div>
+            <div class="res-section-title">기상 · 지리 · 위성</div>
+            <div class="res-section-desc">지구관측·지도·기후 데이터</div>
+          </div>
+        </div>
+        <div class="res-grid">
+          <a class="res-link" href="https://www.earthdata.nasa.gov" target="_blank" rel="noopener noreferrer"><div class="res-link-name">NASA Earthdata</div><div class="res-link-desc">지구 관측·위성 데이터</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://earthengine.google.com" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Google Earth Engine</div><div class="res-link-desc">위성·지리 분석 데이터</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://www.openstreetmap.org" target="_blank" rel="noopener noreferrer"><div class="res-link-name">OpenStreetMap</div><div class="res-link-desc">오픈 지도 데이터</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://www.ncei.noaa.gov" target="_blank" rel="noopener noreferrer"><div class="res-link-name">NOAA NCEI</div><div class="res-link-desc">미국 기후·해양 데이터</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+        </div>
+      </div>
+
+      <div class="res-section" style="--rc:#5fc2cc">
+        <div class="res-section-head">
+          <span class="res-section-icon"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a.5.5 0 0 1 .5.5v.522c1.59.16 2.5.98 2.5 1.978a.5.5 0 0 1-1 0c0-.467-.5-1-2-1s-2 .533-2 1c0 .5.5.833 2 1.05 1.84.27 3 .93 3 2.45 0 1.16-1 2-2.5 2.18v.52a.5.5 0 0 1-1 0v-.52C4.91 11.45 4 10.63 4 9.63a.5.5 0 0 1 1 0c0 .47.5 1 2 1s2-.53 2-1.05c0-.5-.5-.83-2-1.05C5.16 8.26 4 7.6 4 6.08 4 4.92 5 4.08 6.5 3.9v-.52A.5.5 0 0 1 8 0z"/></svg></span>
+          <div>
+            <div class="res-section-title">금융 · 경제</div>
+            <div class="res-section-desc">경제 지표·금융 시계열 데이터</div>
+          </div>
+        </div>
+        <div class="res-grid">
+          <a class="res-link" href="https://fred.stlouisfed.org" target="_blank" rel="noopener noreferrer"><div class="res-link-name">FRED</div><div class="res-link-desc">미 연준 경제 지표</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://ecos.bok.or.kr" target="_blank" rel="noopener noreferrer"><div class="res-link-name">한국은행 ECOS</div><div class="res-link-desc">국내 경제 통계</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://finance.yahoo.com" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Yahoo Finance</div><div class="res-link-desc">주가·금융 시계열</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
+          <a class="res-link" href="https://data.nasdaq.com" target="_blank" rel="noopener noreferrer"><div class="res-link-name">Nasdaq Data Link</div><div class="res-link-desc">금융·대체 데이터(구 Quandl)</div><svg class="res-link-arrow" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5h7.5V11h-1.5V6.06l-7.97 7.97-1.06-1.06L8.94 5H5V3.5z"/></svg></a>
         </div>
       </div>
     </div>
